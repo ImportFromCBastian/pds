@@ -1,0 +1,116 @@
+{% extends "layout.html"%} {% block title %}Registrar Cobro{% endblock %} {%
+block head%} {{super()}} {% endblock %} {% block content%}
+<a
+	class="flex w-fit rounded-md relative"
+	href="{{ url_for('modulo_cobros.listado') }}"
+	alt="volver al listado">
+	<span class="mr-2 material-symbols-outlined"> arrow_back </span>
+	<span class="material-symbols-rounded"> groups </span>
+</a>
+
+<h1 class="text-center text-2xl font-bold my-4">
+	Agregando nuevo cobro al sistema
+</h1>
+<div class="w-full max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
+	<form
+		action="{{ url_for('modulo_cobros.registrar_cobro') }}"
+		class="flex flex-col space-y-3"
+		method="POST">
+		<label
+			for="dni_equitador"
+			class="form-label mt-2">
+			Ingrese el DNI del Jinete o Amazona
+		</label>
+		<select
+			type="number"
+			placeholder="DNI de J&A"
+			name="dni_equitador"
+			id="dni_equitador"
+			class="form-input w-full sm:w-auto md:w-96 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+			required>
+			{%for rider in riders %}
+				<option value="{{rider.dni}}">{{rider.dni}} - {{rider.nombre}} {{rider.apellido}}</option>
+			{% endfor %}
+		</select>
+
+		<label for="fecha_pago"> Ingrese la fecha en que se realiza el pago </label>
+		<input
+			type="date"
+			placeholder="DD/MM/AAAA"
+			name="fecha_pago"
+			id="fecha_pago"
+			class="form-input w-full sm:w-auto md:w-96"
+			required />
+
+		<label for="medio_de_pago"> Seleccione el medio de pago </label>
+		<select
+			name="medio_de_pago"
+			class="form-input w-full sm:w-auto md:w-96"
+			id="medio_de_pago"
+			required>
+			{% for pay_method in pay_methods %}
+			<option value="{{ pay_method.name }}">{{ pay_method.value }}</option>
+			{% endfor %}
+		</select>
+
+		<label for="monto"> Ingrese el monto a pagar </label>
+		<input
+			type="number"
+			placeholder="$"
+			name="monto"
+			id="monto"
+			class="form-input w-full sm:w-auto md:w-96 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+			required />
+      <p class="text-xs text-gray-500">Nota: si quiere registrar una deuda puede usar el simbolo negativo (-)</p>
+		<label
+			for="dni_empleado"
+			class="form-label mt-2">
+			Ingrese el DNI del Empleado que recibe el cobro
+		</label>
+		<select
+			type="number"
+			placeholder="DNI de Empleado"
+			name="dni_empleado"
+			id="dni_empleado"
+			class="form-input w-full sm:w-auto md:w-96 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+			required>
+			{% for employee in employees %}
+				<option value="{{employee.dni}}">{{employee.dni}} - {{employee.nombre}} {{employee.apellido}}</option>
+			{% endfor %}
+		</select>
+
+		<label
+			for="observaciones"
+			class="form-label mt-2">
+			Ingrese alguna/s observación/es
+		</label>
+		<input
+			type="text"
+			placeholder="Observaciones"
+			name="observaciones"
+			id="observaciones"
+			class="form-input w-full sm:w-auto md:w-96" />
+
+		<div class="flex self-end">
+			<a
+				href="{{ url_for('modulo_cobros.listado') }}"
+				class="relative text-blue-400 hover:border hover:rounded-lg hover:bg-gray-100 px-4 py-2 mx-5 flex items-center transition duration-300 ease-in-out transform hover:scale-105 active:scale-95">
+				Cancelar
+			</a>
+			<button
+				type="submit"
+				onclick="return confirmAdd()"
+				class="relative text-white hover:text-white hover:bg-blue-500 flex items-center border border-blue-500 rounded-lg bg-blue-400 p-2 transition duration-300 ease-in-out shadow-md transform hover:scale-105 active:scale-95">
+				<span class="material-symbols-rounded">save</span>
+				Agregar
+			</button>
+		</div>
+	</form>
+</div>
+
+<script>
+	function confirmAdd() {
+		return confirm('¿Estás seguro de que deseas registrar este cobro?');
+	}
+</script>
+{% endblock %}

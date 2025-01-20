@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>¡Error!</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='errorStyle.css') }}"
+    />
+  </head>
+  <body>
+    <div class="error-container">
+      {% set code_str = error.code|string %} {% if code_str[1] == '0' %}
+      <div style="justify-content: center">
+        <h1>
+          <span class="first-num">{{ code_str[0] }}</span>
+          <span>
+            <img
+              src="{{ url_for('static', filename='images/emoji.png') }}"
+              alt="0"
+            />
+          </span>
+          <span class="second-num">{{ code_str[2] }}</span>
+        </h1>
+      </div>
+      {% else %}
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        "
+      >
+        <h1>{{ code_str }}</h1>
+        <img
+          class="error-emoji-side"
+          src="{{ url_for('static', filename='images/emoji.png') }}"
+          alt="Error Emoji"
+        />
+      </div>
+      {% endif %}
+      <h2 class="error-message">{{ error.name }}</h2>
+      <p class="error-details">{{ error.description }}</p>
+      <a href="{{ url_for('home.landing') }}" class="error-button">
+        Go to the homepage
+      </a>
+    </div>
+  </body>
+</html>

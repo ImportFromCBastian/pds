@@ -1,0 +1,304 @@
+{% extends "layout.html" %}
+{% block title %}Editar Caballo{% endblock %}
+{% block head %}
+  {{ super() }} 
+  <style>
+    .form-container {
+      max-width: 800px;
+      margin: auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .form-group {
+      flex: 1 1 45%;
+      min-width: 250px;
+    }
+    
+  
+    
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+
+
+    .footer-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+
+
+    .cancel-btn {
+      background-color: #f44336;
+    }
+
+    .cancel-btn:hover {
+      background-color: #e53935;
+    }
+
+    .employee-list {
+      margin-top: 15px;
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+    }
+
+    .employee-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .remove-employee {
+      color: #f44336;
+      cursor: pointer;
+    }
+
+    .error {
+      color: #f44336;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    @media (max-width: 600px) {
+      .form-group {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<a class="flex w-fit rounded-md  relative" href="{{url_for('equestrian.show', id=horse.id)}}" alt="volver al listado">
+  <span class="mr-2 material-symbols-outlined">
+    arrow_back
+  </span>
+  <svg class="w-6 h-6"<?xml version="1.0" encoding="utf-8"?><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 122.88 109.03" style="enable-background:new 0 0 122.88 109.03" xml:space="preserve"><style type="text/css">.st0{fill-rule:evenodd;clip-rule:evenodd;}</style><g><path class="st0" d="M21.2,72.04c4.63,1.68,11.49-2.09,22-14.74c3.98,1.47,7.1,4.73,8.46,11.72c2.58,13.31-1.52,21.83-7.22,33.54 c-1.06,2.17-2.12,4.32-3.15,6.48h81.29l-0.25-0.2c5.55-39.24-31.98-58.51-4.56-46.4c-11.78-28.52-48.09-37.8-22.47-34.84 C82.12,15.55,65.5,8.89,41.87,13.1C36.85,5.77,24.84-9.86,28.52,8.86L22.5,3.49l-0.33,18.89C15.01,27.84,11.1,46.03,5.56,57.86 c-4.74,4.7-6.56,10.32-5.05,19.06C7.89,86.43,19.54,84.07,21.2,72.04L21.2,72.04z"/></g></svg>
+
+  </a>
+<h1 class="flex justify-center items-center text-center text-2xl font-bold my-4">
+        Editar Datos del Caballo
+    </h1>
+<div class="h-full flex items-center justify-center p-4">
+  <div class="form-container">
+    
+    <form id="horseForm" onsubmit="return saveHorse(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="label-input" for="nombre">Nombre:</label>
+          <input class="form-input" class="form-input" type="text" id="nombre" name="nombre" value="{{ horse.nombre }}" required>
+        </div>
+        <div class="form-group">
+          <label class="label-input" for="fecha_nacimiento">Fecha de Nacimiento:</label>
+          <input class="form-input" type="date" id="fecha_nacimiento" name="fecha_nacimiento" value="{{ horse.fecha_nacimiento.strftime('%Y-%m-%d') }}" required>
+        </div>
+        <div class="form-group">
+          <label class="label-input" for="fecha_ingreso">Fecha de Ingreso:</label>
+          <input class="form-input" type="date" id="fecha_ingreso" name="fecha_ingreso" value="{{ horse.fecha_ingreso.strftime('%Y-%m-%d') }}" required>
+        </div>
+        <div class="form-group">
+          <label class="label-input" for="sexo">Sexo:</label>
+          <select class="form-input" id="sexo" name="sexo" required>
+            {% for g in genre %}
+              <option value="{{ g.name }}" {% if g.name == horse.sexo.name %}selected{% endif %}>{{ g.value }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="label-input" for="raza">Raza:</label>
+          <input class="form-input" type="text" id="raza" name="raza" value="{{ horse.raza }}" required>
+        </div>
+        <div class="form-group">
+          <label class="label-input" for="pelaje">Pelaje:</label>
+          <input class="form-input" type="text" id="pelaje" name="pelaje" value="{{ horse.pelaje }}" required>
+        </div>
+        <div class="form-group">
+          <label class="label-input" for="compra_donacion">Compra/Donación:</label>
+          <select class="form-input" id="compra_donacion" name="compra_donacion" required>
+            {% for compra in type_compra_donacion %}
+              <option value="{{ compra.name }}" {% if compra.name == horse.compra_donacion.name %}selected{% endif %}>{{ compra.value }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="label-input" for="sede_asignada">Sede Asignada:</label>
+          <select class="form-input" id="sede_asignada" name="sede_asignada" required>
+            {% for sede in sedes %}
+              <option value="{{ sede.name }}" {% if sede.name == horse.sede_asignada.name %}selected{% endif %}>{{ sede.value }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="label-input" for="tipo_de_JyA_asignado">Tipo de JyA Asignado:</label>
+          <select class="form-input" id="tipo_de_JyA_asignado" name="tipo_de_JyA_asignado" required>
+            {% for type in typeofJyA %}
+              <option value="{{ type.name }}" {% if type.name == horse.tipo_de_JyA_asignado.name %}selected{% endif %}>{{ type.value }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="label-input" for="empleados">Empleados Asignados:</label>
+        <div class="employee-list mb-4 mt-0" id="employee-list">
+          {% for empleado in horse.empleados %}
+            <div class="employee-item mb-0" data-id="{{ empleado.dni }}">
+              <span>{{ empleado.nombre }} {{ empleado.apellido }}</span>
+              <span class="remove-employee" onclick="removeEmployee('{{ empleado.dni }}')">Eliminar</span>
+            </div>
+          {% endfor %}
+        </div>
+        <div class="error" id="employeeError" style="display:none;">Debes asignar al menos un empleado.</div>
+      </div>
+
+      <div class="form-group">
+        <label class="label-input" for="dni">Agregar Empleado:</label>
+        <select class="form-input" id="dni" onchange="addEmployee()">
+          <option value="">Elige un empleado...</option>
+          {% for empleado in empleados %}
+            {% if empleado.dni not in horse.empleados|map(attribute='dni') %}
+              <option value="{{ empleado.dni }}">
+                {{ empleado.nombre }} {{ empleado.apellido }} (DNI: {{ empleado.dni }})
+              </option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+
+      <input class="form-input" type="hidden" id="empleados_dni" name="empleados_dni" value="{{ horse.empleados|map(attribute='dni')|join(',') }}">
+      
+      <div class="flex justify-end mt-2">
+        	<a
+					href="{{ url_for('equestrian.show', id=horse.id) }}"
+					class="relative text-blue-400 hover:border hover:rounded-lg hover:bg-gray-100 px-4 py-2 mx-5 flex items-center transition duration-300 ease-in-out transform hover:scale-105 active:scale-95">
+					Cancelar
+				</a>
+				<button
+					type="submit"
+					class="relative text-white hover:text-white hover:bg-blue-500 flex items-center border border-blue-500 rounded-lg bg-blue-400 p-2 transition duration-300 ease-in-out shadow-md transform hover:scale-105 active:scale-95">
+					<span class="material-symbols-rounded">save</span>
+          Guardar cambios
+				</button>
+        </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function updateHiddenInput() {
+    const employeeDNIList = Array.from(document.querySelectorAll('.employee-item')).map(item => item.getAttribute('data-id'));
+    document.getElementById('empleados_dni').value = employeeDNIList.join(',');
+}
+
+function validateForm() {
+    const employeeItems = document.querySelectorAll('.employee-item');
+    const errorElement = document.getElementById('employeeError');
+    if (employeeItems.length === 0) {
+        errorElement.style.display = 'block';
+        return false;
+    }
+    errorElement.style.display = 'none';
+    return true;
+}
+
+function saveHorse(event) {
+    event.preventDefault(); // Prevent default form submission
+
+    if (!validateForm()) return;
+
+    const formData = new FormData(document.getElementById('horseForm'));
+    const url = "{{ url_for('equestrian.update', id=horse.id) }}";
+
+    fetch(url, {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => {
+        if (response.ok) {
+            window.location.href = "{{ url_for('equestrian.show', id=horse.id) }}"; // Redirect on success
+        } else {
+            // Handle error response
+            alert("Error al guardar los datos. Inténtalo de nuevo.");
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert("Error al guardar los datos. Inténtalo de nuevo.");
+    });
+}
+
+function addEmployee() {
+    const select = document.getElementById('dni');
+    const selectedOption = select.options[select.selectedIndex];
+    const employeeList = document.getElementById('employee-list');
+    
+    if (selectedOption.value) {
+        const dni = selectedOption.value;
+        const nombre = selectedOption.text;
+
+        // Check if the employee is already assigned
+        if (!document.querySelector(`.employee-item[data-id='${dni}']`)) {
+            const newEmployeeDiv = document.createElement('div');
+            newEmployeeDiv.classList.add('employee-item');
+            newEmployeeDiv.setAttribute('data-id', dni);
+            newEmployeeDiv.innerHTML = `
+                <span>${nombre}</span>
+                <span class="remove-employee" onclick="removeEmployee('${dni}')">Eliminar</span>
+            `;
+            
+            employeeList.appendChild(newEmployeeDiv);
+            updateHiddenInput(); // Update the hidden input
+            
+            // Remove the option from the select if already assigned
+            select.remove(select.selectedIndex);
+        } else {
+            alert("Este empleado ya está asignado.");
+        }
+    }
+}
+  
+function removeEmployee(dni) {
+    const employeeItem = document.querySelector(`.employee-item[data-id='${dni}']`);
+    if (employeeItem) {
+        employeeItem.remove();
+        updateHiddenInput(); // Update the hidden input
+    }
+}
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

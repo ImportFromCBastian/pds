@@ -1,0 +1,94 @@
+{% extends "layout.html"%} {% block title %}Listado de Cobros{% endblock %} {%
+block head%} {{super()}} {% endblock %} {% block content%}
+
+<h1
+	class="flex justify-center items-center text-center text-2xl font-bold my-4">
+	Listado del Estado de Jinetes y Amazonas del sistema con respecto a los pagos
+</h1>
+
+<div
+	class="w-full max-w-6xl mx-auto p-6 bg-white relative flex flex-col justify-between rounded-lg">
+	<div class="bg-gray-100 p-4 sm:p-6 mb-5 rounded-lg shadow-md">
+		<div
+			class="overflow-x-auto max-w-full sm:max-w-6xl mx-auto rounded-lg shadow-md">
+			<div class="bg-white overflow-hidden rounded-lg shadow-md">
+				<div
+					class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 gap-4 p-4 bg-gray-50 font-medium text-xs uppercase text-gray-500 tracking-wider">
+					<div class="hidden sm:block">Nombre y Apellido J&A</div>
+					<div class="hidden sm:block">DNI J&A</div>
+					<div class="hidden sm:block">Estado</div>
+					<div class="hidden sm:block"></div>
+				</div>
+				<div class="divide-y divide-gray-200">
+					{% for rider in riders %}
+					<div
+						class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 gap-4 p-4 items-center hover:bg-gray-50">
+						<div class="text-xs text-gray-400">
+							{% if is_system_admin or check_permission(session, "charge_show")
+							%}
+							<a href="{{ url_for('riders.info', dni=rider.dni) }}"
+								>{{rider.nombre}} {{rider.apellido}}</a
+							>
+							{% else %} {{rider.nombre}} {{rider.apellido}} {% endif %}
+						</div>
+						<div class="text-sm font-medium text-gray-900">
+							{% if is_system_admin or check_permission(session, "charge_show")
+							%}
+							<a href="{{ url_for('riders.info', dni=rider.dni) }}"
+								>{{ rider.dni }}</a
+							>
+							{% else %} {{ rider.dni }} {% endif %}
+						</div>
+						<div class="text-sm font-medium text-gray-900">
+							{% if rider.tiene_deudas %}
+							<span style="color: red"> Debe Pagos </span>
+							{% else %}
+							<span style="color: green"> Al día con los Pagos </span>
+							{% endif %}
+						</div>
+						{% if is_system_admin(session) or check_permission(session,
+						"charge_update") %}
+						<div class="text-sm font-medium text-gray-900">
+							{% if rider.tiene_deudas %}
+							<a
+								href="{{ url_for('modulo_cobros.cambiar_estado_jya', dni=rider.dni) }}"
+								style="color: green">
+								Marcar al Día
+							</a>
+							{% else %}
+							<a
+								href="{{ url_for('modulo_cobros.cambiar_estado_jya', dni=rider.dni) }}"
+								style="color: red">
+								Marcar en Deuda
+							</a>
+							{% endif %}
+						</div>
+						{% endif %}
+					</div>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="flex justify-between">
+		<a
+			class="flex w-fit rounded-md relative"
+			href="{{ url_for('modulo_cobros.listado') }}"
+			alt="volver a equipo">
+			<span class="material-symbols-outlined"> arrow_back </span>
+			<span class="material-symbols-rounded"> groups </span>
+		</a>
+		<div class="cant_pages">
+			<p>Páginas</p>
+			{% for page in range(0, pages) %}
+			<a
+				href="{{ url_for('modulo_cobros.checkear_estado_jya', page_receive=page) }}"
+				style="color: orangered">
+				{{ page + 1 }}
+			</a>
+			{% endfor %}
+		</div>
+	</div>
+</div>
+{% endblock %}

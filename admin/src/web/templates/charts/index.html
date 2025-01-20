@@ -1,0 +1,61 @@
+{% extends "layout.html"%}
+{%block title%}
+  Estadisticas
+{%endblock%}
+{% block content %}
+  <select name="chart_type" id="chart_type" class=" p-2 border border-gray-300 rounded-md">
+    <option value="0">Seleccione una grafica que mostrar</option>
+    <option value="1">Total de empleados por profesi&oacute;n</option>
+    <option value="2">Total de pagos realizados por mes el ultimo año</option>
+    <option value="3">Total de ingresos por Jinetes y Amazonas</option>
+  </select>
+  <div class="hidden mt-4 justify-center rounded-lg" id="total_professions" >
+    <img class="rounded-lg" src="data:image/png;base64,{{ profession_chart }}" alt="empleados profesionales">
+  </div>
+  <div class="hidden mt-4 justify-center items-center rounded-md" id="last_payments">
+    {% if payments_chart != None %}
+      <img class="rounded-lg" src="data:image/png;base64,{{ payments_chart }}" alt="total pagos por mes el ultimo anio">
+    {% else %}
+      <p class="w-fit bg-white p-2 rounded-lg">No hay pagos registrados el ultimo año.</p>
+    {% endif %}
+  </div>
+  <div class="hidden mt-4 justify-center rounded-md" id="total_charges">
+    {% if charges_chart != None %}
+      <img class="rounded-lg" src="data:image/png;base64,{{ charges_chart }}" alt="ingresos por JYA">
+    {% else %}
+      <p class="w-fit bg-white p-2 rounded-lg">No hay ingresos registrados.</p>
+    {% endif %}
+  </div>
+<script defer>
+  document.addEventListener('DOMContentLoaded', function () {
+    const select = document.getElementById('chart_type')
+    const charts = {
+      1: document.getElementById('total_professions'),
+      2: document.getElementById('last_payments'),
+      3: document.getElementById('total_charges'),
+    }
+
+    function hideAllCharts() {
+        Object.values(charts).forEach(chart => {
+        if (chart) {
+          chart.style.display = 'none'
+        }
+      })
+    }
+
+
+    select.addEventListener('change', function () {
+      hideAllCharts();
+      const selectedChart = charts[select.value];
+      if (selectedChart) {
+        selectedChart.style.display = 'block'
+      }
+    });
+
+    hideAllCharts()
+  })
+</script>
+
+
+{% endblock%}
+

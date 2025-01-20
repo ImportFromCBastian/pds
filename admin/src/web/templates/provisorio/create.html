@@ -1,0 +1,107 @@
+{% extends "layout.html" %} {% block title %}Crear Usuario{% endblock %} {%
+block head %} {{ super() }} {% endblock %} {% block content %}
+<a
+  class="flex rounded-md relative w-fit"
+  href="{{url_for('provisorio.index')}}"
+  alt="volver a equipo"
+>
+  <span class="material-symbols-outlined"> arrow_back </span>
+  <span class="material-symbols-rounded"> groups </span>
+</a>
+<h1 class="text-center text-2xl font-bold my-4">
+  Agregando nuevo usuario al sistema
+</h1>
+<div class="w-full max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
+  <form
+    action="{{ url_for('provisorio.crear_usuario') }}"
+    method="POST"
+    class="flex flex-col space-y-3"
+  >
+    <label for="email" class="form-label">
+      Correo Electrónico del Usuario
+    </label>
+    <input
+      type="email"
+      value="{{email}}"
+      name="email"
+      id="email"
+      class="form-input p-2 bg-gray-200 text-gray-600"
+      readonly
+    />
+
+    <label for="alias" class="form-label"> Alias para el Usuario </label>
+    <input
+      type="text"
+      value="{{email.split('@')[0]}}"
+      name="alias"
+      id="alias"
+      class="form-input p-2 bg-gray-200 text-gray-600"
+      readonly
+    />
+
+    <label for="password" class="form-label mb-2">
+      Contraseña del Usuario
+    </label>
+    <input
+      type="text"
+      name="password"
+      id="password"
+      class="form-input p-2 bg-gray-200 text-gray-600"
+      value="{{ random_password }}"
+      readonly
+    />
+
+    <label for="status" class="form-label mb-2">
+      Ingrese el estado del Usuario
+    </label>
+    <input type="hidden" name="bloqueado" value="False" />
+    
+    <input type="text" value="Inactivo" class="form-input p-2 bg-gray-200 text-gray-600" readonly />
+
+    <label for="rol" class="form-label">
+      Seleccione un Rol para el Usuario
+    </label>
+    <select name="rol_id" id="role" class="form-input p-2" required>
+      {% for role in roles %}
+      <option value="{{role.id}}">{{role.nombre}}</option>
+      {% endfor %}
+    </select>
+
+    <label for="system_admin" class="form-label">
+      Seleccione si el Usuario será un System Admin
+    </label>
+    <select
+      name="system_admin"
+      id="system_admin"
+      class="form-input p-2"
+      required
+    >
+      <option value="False">Usuario Normal</option>
+      <option value="True">Usuario System Admin</option>
+    </select>
+
+    <div class="flex self-end">
+      <a
+        href="{{ url_for('provisorio.index') }}"
+        class="relative text-blue-400 hover:border hover:rounded-lg hover:bg-gray-100 px-4 py-2 mx-5 flex items-center transition duration-300 ease-in-out transform hover:scale-105 active:scale-95"
+      >
+        Cancelar
+      </a>
+      <button
+        type="submit"
+        class="relative text-white hover:text-white hover:bg-blue-500 flex items-center border border-blue-500 rounded-lg bg-blue-400 p-2 transition duration-300 ease-in-out shadow-md transform hover:scale-105 active:scale-95"
+        onclick="return confirmAdd()"
+      >
+        <span class="material-symbols-rounded">save</span>
+        Agregar
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+  function confirmAdd() {
+    return confirm("¿Estás seguro de que deseas agregar este usuario?");
+  }
+</script>
+{% endblock %}

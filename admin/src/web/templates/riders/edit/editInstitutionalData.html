@@ -1,0 +1,251 @@
+{% extends "layout.html" %} {% block title %}Editar Jinete/Amazona{% endblock %}
+{% block content %}
+<a class="flex w-fit rounded-md  relative" href="{{url_for('riders.info', dni=rider.dni)}}" alt="volver al listado">
+  <span class="mr-2 material-symbols-outlined">
+    arrow_back
+  </span>
+  <span class="material-symbols-rounded">
+    person
+  </span>
+  </a>
+<h1 class="text-center text-2xl font-bold p-4">
+		Editando trabajo en la instiución de "{{rider.nombre}} {{rider.apellido}} "
+	</h1>
+<div class="w-full max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md">
+	
+
+	
+
+	<form
+  class="flex flex-col space-y-3"
+  method="post"
+  id="riderForm"
+  onsubmit="validateForm(event)"
+>
+			<div>
+				<label
+					for="tipo_trabajo"
+					class="form-label block font-medium mb-1">
+					Tipo de trabajo:
+				</label>
+			 <select
+        name="tipo_trabajo"
+        id="tipo_trabajo"
+        class="form-input border rounded w-full p-2"
+        >
+        <option value="" disabled>Seleccione un tipo de trabajo</option>
+        
+            {% for propuesta in propuesta_trabajo %}
+                <option value="{{ propuesta.name }}" {% if propuesta.name == rider.trabajo_institucional.tipo_trabajo.name %} selected {% endif %}>{{ propuesta.value }}</option>
+                {% endfor %}
+    </select>
+			</div>
+			<div>
+				<label
+					for="condicion"
+					class="form-label block font-medium mb-1">
+					Condición:
+				</label>
+			 <select
+        name="condicion"
+        id="condicion"
+        class="form-input border rounded w-full p-2"
+        >
+        <option value="" disabled>Seleccione una condición</option>
+        
+            {% for condicion in condition %}
+                <option value="{{ condicion.name }}" {% if condicion.name == rider.trabajo_institucional.condicion.name %} selected {% endif %}>{{ condicion.value }}</option>
+                {% endfor %}
+    </select>
+			</div>
+      <div>
+				<label
+					for="sede"
+					class="form-label block font-medium mb-1">
+					Sede:
+				</label>
+			 <select
+        name="sede"
+        id="sede"
+        class="form-input border rounded w-full p-2"
+        >
+        <option value="" disabled>Seleccione una sede </option>
+        
+            {% for sede in sedes %}
+                <option value="{{ sede.name }}" {% if sede.name == rider.trabajo_institucional.sede.name %} selected {% endif %}>{{ sede.name }}</option>
+                {% endfor %}
+    </select>
+			</div>
+		<label class="form-label block font-medium mb-1">
+    Día/s:
+</label>
+
+<div class="flex flex-col">
+    <div class="flex items-center mb-2">
+        <input
+            type="checkbox"
+            name="dia[]"
+            id="Lunes"
+            value="Lunes"
+            class="form-checkbox"
+            {% if 'Lunes' in rider.trabajo_institucional.dia %}checked{% endif %} />
+        <label for="dia" class="ml-2">Lunes</label>
+    </div>
+    
+    <div class="flex items-center mb-2">
+          <input
+            type="checkbox"
+            name="dia[]"
+            id="Martes"
+            value="Martes"
+            class="form-checkbox"
+            {% if 'Martes' in rider.trabajo_institucional.dia %}checked{% endif %} />
+        <label for="dia" class="ml-2">Martes</label>
+    </div>
+    
+    <div class="flex items-center mb-2">
+        <input
+            type="checkbox"
+            name="dia[]"
+            id="Miércoles"
+            value="Miércoles"
+            class="form-checkbox"
+            {% if 'Miércoles' in rider.trabajo_institucional.dia %}checked{% endif %} />
+        <label for="dia" class="ml-2">Miércoles</label>
+    </div>
+     <div class="flex items-center mb-2">
+        <input
+            type="checkbox"
+            name="dia[]"
+            id="Jueves"
+            value="Jueves"
+            class="form-checkbox"
+            {% if 'Jueves' in rider.trabajo_institucional.dia %}checked{% endif %} />
+        <label for="dia" class="ml-2">Jueves</label>
+    </div>
+    <div class="flex items-center mb-2">
+        <input
+            type="checkbox"
+            name="dia[]"
+            id="Viernes"
+            value="Viernes"
+            class="form-checkbox"
+            {% if 'Viernes' in rider.trabajo_institucional.dia %}checked{% endif %} />
+        <label for="dia" class="ml-2">Viernes</label>
+    </div>
+    <div>
+				<label
+					for="profesor_terapeuta_id"
+					class="form-label block font-medium mb-1">
+					Profesor/a o terapeuta:
+				</label>
+			 <select
+        name="profesor_terapeuta_id"
+        id="profesor_terapeuta_id"
+        class="form-input border rounded w-full p-2"
+        >
+        <option value="" disabled>Seleccione una persona </option>
+        
+            {% for profesor in profesores %}
+                <option value="{{ profesor.dni }}" {% if profesor.dni == rider.trabajo_institucional.profesor_terapeuta_id %} selected {% endif %}>{{ profesor.nombre }} {{ profesor.apellido }}</option>
+                {% endfor %}
+    </select>
+			</div>
+        <div>
+				<label
+					for="conductor_caballo_id"
+					class="form-label block font-medium mb-1">
+					Conductor de caballo:
+				</label>
+			 <select
+        name="conductor_caballo_id"
+        id="conductor_caballo_id"
+        class="form-input border rounded w-full p-2"
+        >
+        <option value="" disabled>Seleccione una persona </option>
+        
+            {% for conductor in conductores %}
+                <option value="{{ conductor.dni }}" {% if conductor.dni == rider.trabajo_institucional.conductor_caballo_id %} selected {% endif %}>{{ conductor.nombre }} {{ conductor.apellido }}</option>
+                {% endfor %}
+    </select>
+			</div>
+       <div>
+				<label
+					for="auxiliar_pista_id"
+					class="form-label block font-medium mb-1">
+					Auxiliar de pista:
+				</label>
+			 <select
+        name="auxiliar_pista_id"
+        id="auxiliar_pista_id"
+        class="form-input border rounded w-full p-2"
+        >
+        <option value="" disabled>Seleccione una persona </option>
+        
+            {% for auxiliar in auxiliares %}
+                <option value="{{ auxiliar.dni }}" {% if auxiliar.dni == rider.trabajo_institucional.auxiliar_pista_id %} selected {% endif %}>{{ auxiliar.nombre }} {{ auxiliar.apellido }}</option>
+                {% endfor %}
+    </select>
+			</div>
+        <div>
+				<label
+					for="caballo_id"
+					class="form-label block font-medium mb-1">
+					Caballo:
+				</label>
+			 <select
+        name="caballo_id"
+        id="caballo_id"
+        class="form-input border rounded w-full p-2"
+        >
+        <option value="" disabled>Seleccione un caballo </option>
+        
+            {% for caballo in caballos %}
+                <option value="{{ caballo.id }}" {% if caballo.id == rider.trabajo_institucional.caballo_id %} selected {% endif %}>{{ caballo.nombre }}</option>
+                {% endfor %}
+    </select>
+			</div>
+			</div>
+      <div
+			id="error-msg"
+			class="hidden text-red-500 mt-2"></div>
+<div class="flex justify-end pt-4">
+  <a href="{{url_for("riders.info", dni=rider.dni)}}" class="relative text-blue-400 hover:border hover:rounded-lg hover:bg-gray-100 px-4 py-2 mx-5 flex items-center transition duration-300 ease-in-out transform hover:scale-105 active:scale-95">
+      Cancelar
+  </a>
+  <button type="submit" class="relative text-white hover:text-white hover:bg-blue-500 flex items-center border border-blue-500 rounded-lg bg-blue-400 p-2 transition duration-300 ease-in-out shadow-md transform hover:scale-105 active:scale-95">
+      <span class="material-symbols-outlined">save</span>
+      Guardar cambios
+  </button>
+</div>
+  </form>
+</div>
+
+<script>
+  function validateForm(event) {
+		const currentForm = document.getElementById('riderForm');
+		const errorMsg = document.getElementById('error-msg');
+		let allFieldsValid = true;
+	
+			let checkboxes = document.querySelectorAll(
+				'input[type="checkbox"][name="dia[]"]'
+			);
+			let checkedOne = Array.from(checkboxes).some((x) => x.checked);
+			if (!checkedOne) {
+				showError('Debe seleccionar al menos un dia');
+				allFieldsValid = false;
+      }
+    if (!allFieldsValid) {
+      event.preventDefault();
+    }
+
+		
+		}
+
+		function showError(message) {
+			const errorMsg = document.getElementById('error-msg');
+			errorMsg.textContent = message;
+			errorMsg.classList.remove('hidden');
+		}
+</script>
+{% endblock %}

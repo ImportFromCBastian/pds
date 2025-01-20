@@ -1,0 +1,105 @@
+{% extends "layout.html" %} {% block title %}Contenido{% endblock %} {% block
+head%} {{super()}} {% endblock %} {% block content%}
+
+<h1
+	class="flex justify-center items-center text-center text-2xl font-bold my-4">
+	Listado de noticias
+</h1>
+<div
+	class="w-full max-w-6xl mx-auto p-1 bg-white rounded-lg shadow-md relative flex flex-col justify-between">
+	<a
+		class="m-2 material-symbols-outlined hover:text-green-500"
+		href="{{url_for('content.new')}}">
+		<span class="material-symbols-outlined"> add_circle </span>
+	</a>
+<form method="get" action="{{ url_for('content.index') }}" class="flex items-center space-x-2 justify-end">
+    <label for="per_page" class="form-label mb-0">Resultados por página</label>
+    <select id="per_page" name="per_page" class="form-input border border-gray-300 rounded p-1 w-20">
+        <option value="5" {% if per_page is not defined or per_page == 5 %} selected {% endif %}>5</option>
+        <option value="10" {% if per_page == 10 %} selected {% endif %}>10</option>
+        <option value="20" {% if per_page == 20 %} selected {% endif %}>20</option>
+        <option value="50" {% if per_page == 50 %} selected {% endif %}>50</option>
+    </select>
+    <button type="submit" class="bg-primary text-primary-foreground h-10 px-4 py-2 rounded flex items-center">
+        <span class="material-symbols-outlined">search</span>
+    </button>
+</form>
+
+
+	<div class="bg-gray-100 p-4 sm:p-4 rounded-lg">
+		<div class="max-w-full sm:max-w-6xl mx-auto">
+			<div
+				class="overflow-hidden w-full max-w-6xl mx-auto bg-white rounded-lg shadow-md relative flex flex-col sm:min-w-[20px] md:min-w-[600px] lg:min-w-[1000px]">
+				{% if content %} {% for item in content %}
+
+				<div
+					class="border-b border-gray-300 p-4 hover:bg-gray-200 transition duration-200">
+					<div class="flex justify-between mb-4">
+						<span
+							class="text-xs font-semibold px-2 py-1 rounded bg-opacity-70 {% if item.estado.value == 'Borrador' %} bg-yellow-200 text-orange-700{% elif item.estado.value == 'Publicado' %} bg-green-200 text-emerald-700{% elif item.estado.value == 'Archivado' %} bg-red-200 text-rose-700{% else %} bg-gray-300 text-gray-800 {% endif %}">
+							{{ item.estado.value }}
+						</span>
+
+						<span class="text-gray-500 text-sm justify-end flex">
+    {% if item.fecha_publicacion %}
+        {{ item.fecha_publicacion.strftime('%d de %B de %Y') }}
+    {% else %}
+        Aún no publicado
+    {% endif %}
+</span>
+
+					</div>
+					<div
+						class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+						<h2 class="text-xl font-semibold text-gray-800 break-words">
+							{{ item.titulo }}
+						</h2>
+					</div>
+					<p class="text-gray-700 text-sm mt-2 break-words">{{ item.copete }}</p>
+					<a
+						href="{{ url_for('content.details', id=item.id) }}"
+						class="text-blue-500 hover:underline mt-2 block">
+						Leer más
+					</a>
+				</div>
+				{% endfor %} {% else %}
+				<div class="p-4 text-center text-gray-500">
+					No se encontraron noticias para mostrar.
+				</div>
+				{% endif %}
+			</div>
+		</div>
+		<div class="flex justify-between items-center my-6">
+			<div>
+				Mostrando {{ content.items | length }} de {{ content.total }} resultados
+			</div>
+
+			<div class="flex space-x-2">
+				{% if content.has_prev %}
+				<a
+					href="{{ url_for('content.index', page=content.prev_num, per_page=request.args.get('per_page')) }}"
+					class="bg-primary text-primary-foreground h-10 px-4 py-2 rounded">
+					Anterior
+				</a>
+				{% endif %} {% for page in range(1, content.pages + 1) %} {% if page ==
+				content.page %}
+				<span class="h-10 px-4 py-2 rounded bg-gray-300">{{ page }}</span>
+				{% else %}
+				<a
+					href="{{ url_for('content.index', page=page, per_page=request.args.get('per_page')) }}"
+					class="bg-primary text-primary-foreground h-10 px-4 py-2 rounded">
+					{{ page }}
+				</a>
+				{% endif %} {% endfor %} {% if content.has_next %}
+				<a
+					href="{{ url_for('content.index', page=content.next_num, per_page=request.args.get('per_page')) }}"
+					class="bg-primary text-primary-foreground h-10 px-4 py-2 rounded">
+					Siguiente
+				</a>
+				{% endif %}
+			</div>
+		</div>
+
+		{% endblock %}
+	</div>
+</div>

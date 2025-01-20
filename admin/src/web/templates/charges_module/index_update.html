@@ -1,0 +1,135 @@
+{% extends "layout.html" %} {% block title %}Editar Cobro{% endblock %} {% block
+head %} {{ super() }} {% endblock %} {% block content %} {% if errors %} {% for
+error in errors %}
+<div
+	class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+	role="alert">
+	<strong class="font-bold">Error!</strong>
+	<span class="block sm:inline">{{ error }}</span>
+</div>
+{% endfor %} {% endif %}
+<a
+	class="flex w-fit rounded-md relative"
+	href="{{url_for('modulo_cobros.listado')}}"
+	alt="volver al listado">
+	<span class="mr-2 material-symbols-outlined"> arrow_back </span>
+	<span class="material-symbols-rounded"> person </span>
+</a>
+<h1 class="text-center text-2xl font-bold my-4">
+	Editando Cobro de {{ charge.equitador.nombre }}
+</h1>
+<div class="w-full max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md">
+	<form
+		class="flex flex-col space-y-6 my-1"
+		action="{{ url_for('modulo_cobros.actualizar_cobro', id=charge.id) }}"
+		method="POST">
+		<div class="min-w-[120px] w-full sm:w-auto">
+			<label
+				for="dni_equitador"
+				class="form-label">
+				DNI del Jinete o Amazonas
+			</label>
+			<select
+				type="number"
+				placeholder="{{ charge.dni_equitador }}"
+				name="dni_equitador"
+				id="dni_equitador"
+				class="form-input p-2 border rounded w-full border-gray-300 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+				required>
+				{%for rider in riders %}
+					<option value="{{rider.dni}}" {% if rider.dni == charge.dni_equitador %} selected {% endif %}>{{rider.dni}} - {{rider.nombre}} {{rider.apellido}}</option>
+				{% endfor %}
+			</select>
+		</div>
+
+		<div class="min-w-[120px] w-full sm:w-auto">
+			<label
+				for="dni_empleado"
+				class="form-label">
+				DNI del Empleado
+			</label>
+			<select
+				type="number"
+				placeholder="{{ charge.dni_empleado }}"
+				name="dni_empleado"
+				id="dni_empleado"
+				class="form-input p-2 border rounded w-full border-gray-300 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+				required>
+				{% for employee in employees %}
+					<option value="{{employee.dni}}" {% if employee.dni == charge.dni_empleado %} selected {% endif %}>{{employee.dni}} - {{employee.nombre}} {{employee.apellido}}</option>
+				{% endfor %}
+			</select>
+		</div>
+
+		<div class="min-w-[120px] w-full sm:w-auto">
+			<label for="fecha_pago"> Fecha del Pago: {{charge.fecha_pago.strftime("%d/%m/%Y")}}</label>
+			<input
+				type="date"
+				name="fecha_pago"
+				id="fecha_pago"
+				class="form-input p-2 border rounded w-full border-gray-300" />
+		</div>
+
+		<div class="min-w-[120px] w-full sm:w-auto">
+			<label for="monto"> Monto del Pago:</label>
+			<input
+				type="number"
+				placeholder="${{charge.monto}}"
+				value="{{charge.monto}}"
+				name="monto"
+				id="monto"
+				class="form-input p-2 border rounded w-full border-gray-300 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" />
+		</div>
+
+		<div class="min-w-[120px] w-full sm:w-auto">
+			<label
+				for="medio_de_pago"
+				class="form-label">
+				Medio de Pago
+			</label>
+			<select
+				name="medio_de_pago"
+				id="medio_de_pago"
+				class="form-input p-2 border rounded w-full border-gray-300">
+				<option value="None">
+					Seleccione un medio de pago
+				</option>
+				{% for pay_method in pay_methods %}
+					<option value="{{ pay_method.name }}" {% if pay_method.name == charge.medio_de_pago.name %} selected {% endif %}>{{ pay_method.value }}</option>
+				{% endfor %}
+			</select>
+		</div>
+
+		<div class="min-w-[120px] w-full sm:w-auto">
+			<label
+				for="observaciones"
+				class="form-label">
+				Observaciones
+			</label>
+			<textarea
+				type="text"
+				name="observaciones"
+				id="observaciones"
+				class="form-input p-2 border rounded w-full border-gray-300">
+{{ charge.observaciones }}
+                </textarea
+			>
+		</div>
+
+		<div class="flex justify-end">
+			<a
+				href="{{ url_for('modulo_cobros.listado') }}"
+				class="relative text-blue-400 hover:border hover:rounded-lg hover:bg-gray-100 px-4 py-2 mx-5 flex items-center transition duration-300 ease-in-out transform hover:scale-105 active:scale-95">
+				Cancelar
+			</a>
+			<button
+				type="submit"
+				class="relative text-white hover:text-white hover:bg-blue-500 flex items-center border border-blue-500 rounded-lg bg-blue-400 p-2 transition duration-300 ease-in-out shadow-md transform hover:scale-105 active:scale-95">
+				<span class="material-symbols-rounded">save</span>
+				Guardar cambios
+			</button>
+		</div>
+	</form>
+</div>
+
+{% endblock %}

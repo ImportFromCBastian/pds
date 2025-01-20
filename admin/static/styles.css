@@ -1,0 +1,267 @@
+/* Custom Button */
+.topbar-button {
+	color: #ffffff;
+	padding: 0.5rem 1rem;
+	transition: background-color 0.3s ease;
+	text-align: center;
+	justify-content: center;
+	display: flex;
+	align-items: center;
+	position: relative;
+}
+
+/* Estilos del formulario */
+.form-container {
+	width: 100%;
+	max-width: 32rem;
+	margin: 0 auto;
+}
+
+.form-label {
+	display: block;
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: #4a5568;
+	margin-bottom: 0.5rem;
+}
+
+.form-input {
+	width: 100%;
+	padding: 0.5rem;
+	display: block;
+	border-radius: 0.375rem;
+	border: 1px solid #e2e8f0;
+	font-size: 1rem;
+	transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus {
+	border-color: rgb(233, 205, 48);
+	outline: none;
+	border-width: 1px;
+	box-shadow: 0 0 0 0.1rem rgba(233, 205, 48, 0.356);
+}
+.line {
+	position: absolute;
+	top: 50%;
+	height: 40px;
+	width: 1px;
+	background-color: white;
+	transform: translateY(-50%);
+}
+.left-line {
+	left: 0;
+}
+
+.right-line {
+	right: 0;
+}
+
+.submit-button {
+	font-weight: 700;
+	padding: 0.75rem 1rem;
+	border-radius: 0.375rem;
+	border: none;
+	cursor: pointer;
+	display: inline-block;
+	padding: 10px 20px;
+	font-size: 1rem;
+	color: white;
+	background-color: #e4cb3d;
+	text-decoration: none;
+	border-radius: 5px;
+	transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+	background-color: #e7d150;
+}
+.navbar {
+	border-bottom-right-radius: 16px;
+	border-bottom-left-radius: 16px;
+	background: rgba(201, 201, 201, 0.4);
+	transition: 0.2s;
+	box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+	backdrop-filter: blur(12.9px);
+	-webkit-backdrop-filter: blur(12.9px);
+	border: 1px solid rgba(201, 201, 201, 0.3);
+}
+.glass-effect {
+	background: rgba(201, 201, 201, 0.4);
+
+	border-radius: 16px;
+	box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+	backdrop-filter: blur(12.9px);
+	-webkit-backdrop-filter: blur(12.9px);
+	border: 1px solid rgba(201, 201, 201, 0.3);
+}
+.heading {
+	text-align: center;
+	font-size: 1.5rem;
+	font-weight: 700;
+}
+.form-checkbox {
+	appearance: none; /* Elimina el estilo predeterminado del checkbox */
+	width: 15px; /* Ancho del checkbox */
+	height: 15px; /* Altura del checkbox */
+	border: 2px solid #6d6d6d; /* Borde azul */
+	border-radius: 10px; /* Bordes redondeados */
+	outline: none; /* Elimina el contorno predeterminado */
+	cursor: pointer; /* Cambia el cursor al pasar el mouse */
+	transition: background-color 0.2s, border-color 0.2s; /* Transición suave */
+}
+
+.report-view {
+	background-color: white;
+	margin-top: 1rem;
+	border: #d1d5db solid 1px;
+	border-radius: 0.375rem;
+	padding: 1rem;
+	--tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+	--tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color),
+		0 2px 4px -2px var(--tw-shadow-color);
+	box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+		var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.form-checkbox:checked {
+	background-color: #6d6d6d; /* Color de fondo al marcar */
+}
+
+/* Hide scrollbar for Chrome, Safari, and Opera */
+.hide-scrollbar::-webkit-scrollbar {
+	display: none;
+}
+
+/* Hide scrollbar for IE, Edge, and Firefox */
+.hide-scrollbar {
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
+}
+/* background animation*/
+.css-selector {
+	background: linear-gradient(44deg, #f9c301, #7daebc, #2f7a8f);
+	background-size: 200% 200%;
+	-webkit-animation: AnimationName 10s ease infinite;
+	-moz-animation: AnimationName 10s ease infinite;
+	animation: AnimationName 10s ease infinite;
+	min-height: 100vh;
+}
+@-webkit-keyframes AnimationName {
+	0% {
+		background-position: 0% 67%;
+	}
+	50% {
+		background-position: 100% 34%;
+	}
+	100% {
+		background-position: 0% 67%;
+	}
+}
+@-moz-keyframes AnimationName {
+	0% {
+		background-position: 0% 67%;
+	}
+	50% {
+		background-position: 100% 34%;
+	}
+	100% {
+		background-position: 0% 67%;
+	}
+}
+@-o-keyframes AnimationName {
+	0% {
+		background-position: 0% 67%;
+	}
+	50% {
+		background-position: 100% 34%;
+	}
+	100% {
+		background-position: 0% 67%;
+	}
+}
+@keyframes AnimationName {
+	0% {
+		background-position: 0% 67%;
+	}
+	50% {
+		background-position: 100% 34%;
+	}
+	100% {
+		background-position: 0% 67%;
+	}
+}
+.pata-visible {
+	animation: subir 0.5s forwards;
+}
+
+@keyframes subir {
+	from {
+		top: 3.8rem;
+	}
+	to {
+		top: 0;
+	}
+}
+
+.pata-invisible {
+	animation: bajar 0.5s forwards;
+}
+
+@keyframes bajar {
+	from {
+		top: 0;
+	}
+	to {
+		top: 3.8rem;
+	}
+}
+
+.pata-tapar-desde-espiar {
+	animation: subirPoquito 0.52s forwards;
+}
+
+@keyframes subirPoquito {
+	from {
+		top: 1.5rem;
+	}
+	to {
+		top: 0rem;
+	}
+}
+.pata-espiar-desde-tapar {
+	animation: bajarPoquito 0.52s forwards;
+}
+
+@keyframes bajarPoquito {
+	from {
+		top: 0;
+	}
+	to {
+		top: 1.5rem;
+	}
+}
+.pata-espiar-desde-abajo {
+	animation: subirAEspiar 0.52s forwards;
+}
+
+@keyframes subirAEspiar {
+	from {
+		top: 3.8rem;
+	}
+	to {
+		top: 1.5rem;
+	}
+}
+.pata-bajar-de-espiar {
+	animation: bajarDeEspiar 0.52s forwards;
+}
+
+@keyframes bajarDeEspiar {
+	from {
+		top: 1.5rem;
+	}
+	to {
+		top: 3.8rem;
+	}
+}

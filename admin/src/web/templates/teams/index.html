@@ -1,0 +1,222 @@
+{% extends "layout.html" %} 
+
+{% block title %}Equipo{% endblock %}
+
+{% block head%}
+  {{super()}}
+{% endblock %} 
+
+{% block content%}
+<script defer>
+  function showInfo(dni) {
+    window.location.href = `/equipo/detalles/${dni}`;
+  }
+</script>
+<h1
+  class="flex justify-center items-center text-center text-2xl font-bold my-4">
+  Listado de miembros del equipo
+</h1>
+<div class="w-full max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md relative flex flex-col justify-between">
+  {% if success%}
+    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+      <strong class="font-bold">Éxito!</strong>
+      <span class="block sm:inline">{{ success }}</span>
+    </div>
+  {% endif %}
+
+  <a class="material-symbols-outlined hover:text-green-500" href="{{url_for('teams.new')}}">
+    <span class="material-symbols-outlined">
+      add_circle
+    </span>
+    </a>
+  <form class="space-y-6 my-6">
+    <div class="flex flex-wrap gap-4 items-end">
+      <div class="flex-1 min-w-[120px] w-full sm:w-auto">
+        <label for="dni" class="mb-2 block form-label">DNI</label>
+        <input
+          type="number"
+          id="dni"
+          name="dni"
+          class="w-full border border-gray-300 form-input p-1 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          placeholder="{{ args['dni'] if args.get('dni') else '' }}"
+          value="{{ args['dni'] if args.get('dni') else '' }}"
+        />
+      </div>
+
+      <div class="flex-1 min-w-[120px] w-full sm:w-auto">
+        <label for="nombre" class="mb-2 block form-label">Nombre</label>
+        <input
+          type="text"
+          id="nombre"
+          name="nombre"
+          class="w-full border border-gray-300 form-input p-1"
+          placeholder="{{ args['nombre'] if args.get('nombre') else '' }}"
+          value="{{ args['nombre'] if args.get('nombre') else '' }}"
+        />
+      </div>
+
+      <div class="flex-1 min-w-[120px] w-full sm:w-auto">
+        <label for="apellido" class="mb-2 block form-label">Apellido</label>
+        <input
+          type="text"
+          id="apellido"
+          name="apellido"
+          class="w-full border border-gray-300 form-input p-1"
+          placeholder="{{ args['apellido'] if args.get('apellido') else '' }}"
+          value="{{ args['apellido'] if args.get('apellido') else '' }}"
+        />
+      </div>
+
+      <div class="flex-1 min-w-[120px] w-full sm:w-auto">
+        <label for="email" class="mb-2 block form-label">Mail</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          class="w-full border border-gray-300 form-input p-1"
+          placeholder="{{ args['email'] if args.get('email') else '' }}"
+          value="{{ args['email'] if args.get('email') else '' }}"
+        />
+      </div>
+
+      <div class="flex-1 min-w-[120px] w-full sm:w-auto">
+        <label for="puesto_laboral" class="mb-2 block form-label">Puesto laboral</label>
+        <select id="puesto_laboral" name="puesto_laboral" class="w-full border border-gray-300 form-input p-1">
+          <option class="w-fit">Elige una opción...</option>
+          {% for position in positions %}
+            <option value="{{ position.name }}"
+              {% if args.get('puesto_laboral') == position.name %} selected {% endif %}>
+              {{ position.value }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+    <div class="flex-1 min-w-[120px] w-full sm:w-auto">
+      <label for="sort_field" class="mb-2 block form-label">Ordenar por</label>
+      <select id="sort_field" name="sort_field" class="w-full border border-gray-300 form-input p-1">
+        <option value="">Elige un campo...</option>
+        <option value="dni" {% if args.get('sort_field') == 'dni' %} selected {% else %} selected {% endif %}>DNI</option>
+        <option value="nombre" {% if args.get('sort_field') == 'nombre' %} selected {% endif %}>Nombre</option>
+        <option value="apellido" {% if args.get('sort_field') == 'apellido' %} selected {% endif %}>Apellido</option>
+        <option value="fecha_inicio" {% if args.get('sort_field') == 'fecha_inicio' %} selected {% endif %}>Fecha inicio</option>
+      </select>
+    </div>
+
+    <div class="flex-1 min-w-[120px] w-full sm:w-auto">
+      <label for="sort_order" class="flex-1 min-w-[120px] w-full sm:w-auto">Ordenar</label>
+      <select id="sort_order" name="sort_order" class="w-full border border-gray-300 form-input p-1">
+        <option value="">Elige una opción...</option>
+        <option value="asc" {% if args.get('sort_order') == 'asc' %} selected {% endif %}>Ascendente</option>
+        <option value="desc" {% if args.get('sort_order') == 'desc' %} selected {% endif %}>Descendente</option>
+      </select>
+    </div>
+    <div class="flex-1 min-w-[120px] w-full sm:w-auto">
+      <label for="per_page" class="form-label mb-2 block">Resultados por página</label>
+      <select id="per_page" name="per_page" class="form-input border border-gray-300 rounded p-1">
+        <option value="5" {% if args.get('per_page') is not defined or args.get('per_page') == 5 %} selected {% endif %}>5</option>
+        <option value="10" {% if args.get('per_page') == 10 %} selected {% endif %}>10</option>
+        <option value="20" {% if args.get('per_page') == 20 %} selected {% endif %}>20</option>
+        <option value="50" {% if args.get('per_page') == 50 %} selected {% endif %}>50</option>
+      </select>
+    </div>
+    <button type="submit" class="bg-primary text-primary-foreground h-10 px-4 py-2 rounded">
+      <span class="material-symbols-outlined">
+        search
+      </span>
+    </button>
+    <a href="{{url_for('teams.index')}}" class="bg-primary text-primary-foreground h-10 px-4 py-2 rounded">
+      <span class="material-symbols-outlined">
+        mop
+      </span>
+    </a>
+    </div>
+</form>
+
+  
+<div class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow-md">
+  <div class="max-w-full sm:max-w-6xl mx-auto">
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+      <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-4 p-4 bg-gray-50 font-medium text-xs uppercase text-gray-500 tracking-wider">
+        <!-- small window size -->
+        <div class="block sm:hidden">DNI</div>
+        <div class="block sm:hidden">Info</div>
+        <div class="block sm:hidden">Acci&oacute;n</div>
+        <!-- medium window size and above-->
+        <div class="hidden sm:block">DNI</div>
+        <div class="hidden sm:block">Nombre</div>
+        <div class="hidden sm:block">Apellido</div>
+        <div class="hidden md:block">Mail</div>
+        <div class="hidden lg:block">Puesto laboral</div>
+        <div class="hidden lg:block">¿Activo?</div>
+        <div class="hidden sm:block">Acci&oacute;n</div>
+      </div>
+      <div class="divide-y divide-gray-200">
+        {% if not empty%}
+          {% for member in team %}
+            <button onclick="showInfo('{{member.dni}}')" class="text-left grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-4 p-4 items-center hover:bg-gray-50 w-full">
+              <div class="text-sm font-medium text-gray-900">{{member.dni}}</div>
+              <div class="text-sm text-gray-500">
+                <div>{{member.nombre}}</div>
+                <div class="sm:hidden">{{member.apellido}}</div>
+                <div class="md:hidden text-xs text-gray-500 truncate">{{member.email}}</div>
+                <div class="lg:hidden text-xs text-gray-400">{{member.puesto_laboral.value}}</div>
+                {% if member.activo %}
+                  <div class="lg:hidden text-xs text-gray-400">Si</div>
+                {% else %}
+                  <div class="lg:hidden text-xs text-gray-400">No</div>
+                {% endif %}
+              </div>
+              <div class="hidden sm:block text-sm text-gray-500">{{member.apellido}}</div>
+              <div class="hidden md:block text-sm text-gray-500 w-auto truncate">{{member.email}}</div>
+              <div class="hidden lg:block text-sm text-gray-500">{{member.puesto_laboral.value}}</div>
+              {% if member.activo  %}
+              <div class="hidden lg:block text-sm text-gray-500">Si</div>
+              {% else %}
+              <div class="hidden lg:block text-sm text-gray-500">No</div>
+              {% endif %}
+              <a href="{{url_for('teams.edit',dni=member.dni)}}">
+                <span class="material-symbols-outlined hover:text-red-500">
+                  edit
+                </span>
+              </a>
+            </button>
+          
+          {% endfor %}
+        {% else %}
+          <div class="p-4 text-center text-gray-500">No se encontraron resultados bajo estos criterios</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="flex justify-between items-center my-6">
+  <div>
+    Mostrando {{ pagination.item }} de {{ pagination.total_items }} resultados
+  </div>
+  <div class="flex space-x-2">
+    {% if pagination.has_prev %}
+      <a href="{{ url_for('teams.index', page=pagination.prev_num, per_page=per_page) }}" class="px-4 py-2 bg-blue-500 text-white rounded">Anterior</a>
+    {% endif %}
+    <div class="flex gap-2">
+      {% for page in range(1, pagination.total_pages + 1) %}
+        {% if page == pagination.pages %}
+          <span class="px-4 py-2 bg-gray-300 rounded">{{ page }}</span>
+        {% else %}
+          <a href="{{ url_for('teams.index', page=page, per_page=per_page) }}" class="px-4 py-2 bg-blue-500 text-white rounded">{{ page }}</a>
+        {% endif %}
+      {% endfor %}
+    </div>
+    {% if pagination.has_next %}
+      <a href="{{ url_for('teams.index', page=pagination.next_num, per_page=per_page) }}" class="px-4 py-2 bg-blue-500 text-white rounded">Siguiente</a>
+    {% endif %}
+    </div>
+  </div>
+  <div class="flex justify-end mt-auto">
+    <a class="flex w-fit rounded-md p-2" href="{{url_for('payments.index')}}" alt="ir a pagos">
+      <span class="material-symbols-outlined"> Payments</span>
+      <span class="material-symbols-outlined"> arrow_forward</span>
+    </a>
+  </div>
+</div>
+{% endblock %}

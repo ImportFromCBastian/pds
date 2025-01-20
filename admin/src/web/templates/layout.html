@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<link
+			rel="icon"
+			href="{{ url_for('static', filename='images/logo.png') }}"
+			type="image/png" />
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0" />
+		{% block head %}
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap"
+			rel="stylesheet" />
+		<link
+			rel="stylesheet"
+			href="{{ url_for('static', filename='styles.css') }}" />
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+		<script src="https://cdn.tailwindcss.com"></script>
+		<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+		<title>CEDICA • {% block title %} {% endblock %}</title>
+		<style>
+			.flash-message {
+				transition: transform 0.5s ease, opacity 0.5s ease;
+				transform: translateY(20px); /* Inicialmente desplazado hacia abajo */
+				opacity: 0; /* Inicialmente oculto */
+			}
+			.flash-message.show {
+				transform: translateY(0); /* Desplazado hacia su posición original */
+				opacity: 1; /* Totalmente visible */
+			}
+		</style>
+		{% endblock %}
+	</head>
+	<body class="css-selector font-roboto bg-gray-100 text-gray-900">
+		<nav
+			class="text-white py-1 px-2 shadow-md flex justify-between items-center w-full fixed top-0 left-0 right-0 z-50 navbar"
+			id="navbar">
+			<a href="{{ url_for('home.landing') }}">
+				<div
+					class="flex flex-col md:flex-row items-center md:space-y-0 md:space-x-2">
+					<img
+						src="{{ url_for('static', filename='images/logo.png') }}"
+						alt="Logo CEDICA"
+						class="w-12 h-12 max-w-full object-contain" />
+					<img
+						src="{{ url_for('static', filename='images/logo_texto.png') }}"
+						alt="CEDICA"
+						class="hidden md:block w-auto h-6 md:w-auto md:h-8 max-w-full md:-mt-6 object-cover" />
+				</div>
+			</a>
+			{% if is_authenticated(session) %}
+			<div class="hide-scrollbar overflow-x-auto flex items-center">
+				{% set first_button = True %} {% if is_system_admin(session) or
+				check_permission(session, "user_index") %}
+				<div class="relative flex items-center">
+					{% if not first_button %}
+					<div class="line left-line"></div>
+					{% endif %}
+					<a
+						class="topbar-button hover:translate-y-[-2px]"
+						href="{{ url_for('modulo_usuarios.listado') }}">
+						Administrar Usuarios
+					</a>
+					<div class="line right-line"></div>
+				</div>
+        {% set first_button = False %} {% endif %} {% if
+          is_system_admin(session) or check_permission(session, "provisorio_index") %}
+          <div class="relative flex items-center">
+            {% if not first_button %}
+            <div class="line left-line"></div>
+            {% endif %}
+            <a
+              class="topbar-button hover:translate-y-[-2px]"
+              href="{{ url_for('provisorio.index') }}">
+              Provisorios
+            </a>
+            <div class="line right-line"></div>
+          </div>
+				{% set first_button = False %} {% endif %} {% if
+				is_system_admin(session) or check_permission(session, "charge_index") %}
+				<div class="relative flex items-center">
+					{% if not first_button %}
+					<div class="line left-line"></div>
+					{% endif %}
+					<a
+						class="topbar-button hover:translate-y-[-2px]"
+						href="{{ url_for('modulo_cobros.listado') }}">
+						Cobros
+					</a>
+					<div class="line right-line"></div>
+				</div>
+				{% set first_button = False %} {% endif %} {% if
+				is_system_admin(session) or check_permission(session, "rider_index") %}
+				<div class="relative flex items-center">
+					{% if not first_button %}
+					<div class="line left-line"></div>
+					{% endif %}
+					<a
+						class="topbar-button hover:translate-y-[-2px]"
+						href="{{url_for('riders.index')}}">
+						J&A
+					</a>
+					<div class="line right-line"></div>
+				</div>
+				{% set first_button = False %} {% endif %} {% if
+				is_system_admin(session) or check_permission(session,"equestrian_index")
+				%}
+				<div class="relative flex items-center">
+					{% if not first_button %}
+					<div class="line left-line"></div>
+					{% endif %}
+					<a
+						class="topbar-button hover:translate-y-[-2px]"
+						href="{{url_for('equestrian.index')}}">
+						Ecuestre
+					</a>
+					{% if is_system_admin(session) or check_permission(session,
+					"team_index") %}
+					<div class="line right-line"></div>
+					{%endif%}
+				</div>
+				{% set first_button = False %} {% if is_system_admin(session) or
+				check_permission(session, "content_index") %}
+				<div class="relative flex items-center">
+					{% if not first_button %}
+					<div class="line left-line"></div>
+					{% set first_button = True %} {% endif %}
+
+					<a
+						class="topbar-button hover:translate-y-[-2px]"
+						href="{{ url_for('content.index') }}">
+						Contenido
+					</a>
+
+					{% if is_system_admin(session) or check_permission(session,
+					"team_index") %}
+					<div class="line right-line"></div>
+					{% endif %}
+				</div>
+				{% endif %} {% set first_button = False %} {% endif %} {% if
+				is_system_admin(session) or check_permission(session, "team_index") %}
+				<div class="relative flex items-center">
+					{% if not first_button %}
+					<div class="line left-line"></div>
+					{% endif %}
+					<a
+						class="topbar-button hover:translate-y-[-2px]"
+						href="{{url_for('teams.index')}}">
+						Equipo
+					</a>
+				</div>
+				{% endif %}
+        {% if
+				is_system_admin(session) or check_permission(session, "report_index") %}
+        <div class="relative flex items-center">
+					{% if not first_button %}
+					<div class="line left-line"></div>
+					{% endif %}
+					<a
+						class="topbar-button hover:translate-y-[-2px]"
+						href="{{url_for('reports.index')}}">
+						Reportes
+					</a>
+					{% if is_system_admin(session) or check_permission(session,
+					"report_index") %}
+					<div class="line right-line"></div>
+					{% endif %}
+				</div>
+        {% endif %}
+        {% if
+				is_system_admin(session) or check_permission(session, "chart_index") %}
+				<div class="relative flex items-center">
+					{% if not first_button %}
+					<div class="line left-line"></div>
+					{% endif %}
+					<a
+						class="topbar-button hover:translate-y-[-2px]"
+						href="{{url_for('charts.index')}}">
+						Graficos
+					</a>
+					{% if is_system_admin(session) or check_permission(session,
+					"chart_index") %}
+					<div class="line right-line"></div>
+					{% endif %}
+				</div>
+				{% endif %}
+				<div class="relative flex items-center">
+					{% if not first_button %}
+						<div class="line left-line"></div>
+					{% endif %}
+					{% if is_system_admin(session) or check_permission(session, "contact_index") %}
+						<a
+							class="topbar-button hover:translate-y-[-2px]"
+							href="{{url_for('modulo_contacto.listado')}}">
+							Consultas
+						</a>
+					{% endif %}
+				</div>
+			</div>
+
+			<div class="relative inline-block group">
+				<button
+					class="text-white border-none py-2 px-1 cursor-pointer rounded-full text-sm flex items-center justify-center">
+					<i class="fas fa-user mr-1 text-lg"></i>
+					<span class="hidden sm:block">Usuario</span>
+				</button>
+				<div
+					class="hidden group-hover:block absolute right-0 bg-white min-w-[160px] shadow-lg rounded-lg overflow-hidden z-10">
+					<a
+						href="{{ url_for('home.logout') }}"
+						class="text-gray-800 py-3 px-4 block hover:bg-gray-200 transition-colors">
+						Cerrar sesión
+					</a>
+				</div>
+			</div>
+			{%endif%}
+		</nav>
+		<div class="flex justify-center items-center min-h-screen">
+			<main class="p-6 glass-effect mt-32 shadow-md">
+				{% with messages = get_flashed_messages(with_categories=true) %} {% if
+				messages %}
+				<div class="fixed bottom-10 right-10 p-4 z-50">
+					{% for category, message in messages %} {% if category == 'success' %}
+					<div class="bg-green-200 text-green-800 p-4 rounded-md flash-message">
+						<span>{{ message }}</span>
+					</div>
+					{% elif category == 'error' %}
+					<div class="bg-red-200 text-red-800 p-4 rounded-md flash-message">
+						<span>{{ message }}</span>
+					</div>
+					{% endif %} {% endfor %}
+				</div>
+				{% endif %} {% endwith %} {% block content %} {% endblock %}
+			</main>
+		</div>
+
+		{% block footer %} {% endblock %}
+
+		<script defer>
+			// keep track of previous scroll position
+			var lastScrollTop; // This Varibale will store the top position
+
+			navbar = document.getElementById('navbar'); // Get The NavBar
+
+			window.addEventListener('scroll', function () {
+				//on every scroll this funtion will be called
+
+				var scrollTop =
+					window.pageYOffset || document.documentElement.scrollTop;
+				//This line will get the location on scroll
+
+				if (scrollTop > lastScrollTop) {
+					//if it will be greater than the previous
+					navbar.style.top = '-80px';
+					//set the value to the negetive of height of navbar
+				} else {
+					navbar.style.top = '0';
+				}
+
+				lastScrollTop = scrollTop; //New Position Stored
+			});
+			document.addEventListener('DOMContentLoaded', function () {
+				const alerts = document.querySelectorAll('.flash-message');
+				alerts.forEach((alert) => {
+					alert.classList.add('show'); // Agrega la clase para mostrar el mensaje
+					if (alert.classList.contains('bg-green-200')) {
+						// Si es un mensaje de éxito, muestra confetti
+						setTimeout(() => {
+							confetti({
+								particleCount: 100,
+								spread: 70,
+								origin: { y: 0.6 },
+							}); // Dispara confetti
+						}, 1); // Espera un poco antes de lanzar el confetti
+					}
+					setTimeout(() => {
+						alert.classList.remove('show'); // Quita la clase para ocultar el mensaje
+						setTimeout(() => {
+							alert.parentElement.remove(); // Remueve el contenedor después de la animación
+						}, 500); // Espera a que termine la animación de salida
+					}, 3000); // Mantener visible por 3 segundos
+				});
+			});
+		</script>
+	</body>
+</html>
+

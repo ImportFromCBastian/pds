@@ -1,0 +1,278 @@
+{% extends "layout.html" %} {% block title %}Editar Jinete/Amazona{% endblock %}
+{% block content %}
+<a class="flex w-fit rounded-md  relative" href="{{url_for('riders.info', dni=rider.dni)}}" alt="volver al listado">
+  <span class="mr-2 material-symbols-outlined">
+    arrow_back
+  </span>
+  <span class="material-symbols-rounded">
+    person
+  </span>
+  </a>
+<h1 class="text-center text-2xl font-bold p-4">
+		Editando Información Personal de "{{rider.nombre}} {{rider.apellido}} "
+	</h1>
+<div class="w-full max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md">
+
+
+	
+
+	<form
+		class="flex flex-col space-y-3"
+    id="riderForm"
+		method="post"
+    >
+			<div>
+				<label
+					for="nombre"
+					class="form-label block font-medium mb-1">
+					Nombre:
+				</label>
+				<input
+					type="text"
+					name="nombre"
+					id="nombre"
+          pattern="^[A-Za-zÀ-ÿ\s]+$"  
+					value="{{ rider.nombre }}"
+          title="Por favor, ingrese un nombre válido"
+					class="form-input border rounded w-full p-2"
+					required />
+			</div>
+			<div>
+				<label
+					for="apellido"
+					class="form-label block font-medium mb-1">
+					Apellido:
+				</label>
+				<input
+					type="text"
+					name="apellido"
+					id="apellido"
+          pattern="^[A-Za-zÀ-ÿ\s]+$"  
+					value="{{ rider.apellido }}"
+          title="Por favor, ingrese un nombre válido"
+					class="form-input border rounded w-full p-2"
+					required />
+			</div>
+			<div>
+				<label
+					for="dni"
+					class="form-label block font-medium mb-1">
+					DNI:
+				</label>
+				<input
+					type="number"
+					name="dni"
+					id="dni"
+					value="{{ rider.dni }}"
+					class="form-input border rounded w-full p-2"
+					required
+					readonly />
+			</div>
+
+			<div>
+				<label
+					for="fecha_nacimiento"
+					class="form-label block font-medium mb-1">
+					Fecha de Nacimiento:
+				</label>
+				<input
+        type="date"
+        name="fecha_nacimiento"
+        id="fecha_nacimiento"
+        value="{{ rider.fecha_nacimiento.strftime('%Y-%m-%d') }}"
+        max="{{ fecha_actual.strftime('%Y-%m-%d') }}" 
+        class="form-input border rounded w-full p-2"
+        required />
+			</div>
+			<div>
+				<label
+					for="lugar_nacimiento"
+					class="form-label block font-medium mb-1">
+					Lugar de Nacimiento:
+				</label>
+				<input
+					type="text"
+					name="lugar_nacimiento"
+					id="lugar_nacimiento"
+					value="{{ rider.lugar_nacimiento }}"
+					class="form-input border rounded w-full p-2"
+					required />
+			</div>
+			<div >
+    <label for="certificado_discapacidad" class="form-label block font-medium mb-1">Tiene certificado de discapacidad</label>
+<select name="certificado_discapacidad" id="certificado_discapacidad" class="form-input border rounded w-full p-2" onchange="toggleDiagnosis()">
+    <option value="false" {% if not rider.certificado_discapacidad %}selected{% endif %}>No</option>
+    <option value="true" {% if rider.certificado_discapacidad %}selected{% endif %}>Sí</option>
+</select>
+
+			<div>
+<div id="diagnostico_discapacidad_container" class="{% if rider.tiene_certificado == true %}block{% else %}hidden{% endif %}">
+    <label
+        for="diagnostico_discapacidad"
+        class="form-label block font-medium mb-1 ">
+        Diagnóstico discapacidad:
+    </label>
+    <select
+        name="diagnostico_discapacidad"
+        id="diagnostico_discapacidad"
+        class="form-input border rounded w-full p-2"
+        onchange="toggleOtherDiagnosis()">
+        <option value="" disabled>Seleccione un diagnóstico</option>
+        
+            {% for diagnosis in DiagnosisType %}
+                <option value="{{ diagnosis.name }}" {% if diagnosis.name == rider.diagnostico_discapacidad.name %} selected {% endif %}>{{ diagnosis.value }}</option>
+                {% endfor %}
+    </select>
+    
+<div id="other_diagnosis" class="{% if rider.diagnostico_discapacidad == DiagnosisType.otro %}block{% else %}hidden{% endif %}">
+    <label for="otro_diagnostico" class="form-label block font-medium mb-1">
+        Especifique el diagnóstico:
+    </label>
+    <input
+        type="text"
+        name="otro_diagnostico"
+        id="otro_diagnostico"
+        value="{% if rider.otro_diagnostico %}{{ rider.otro_diagnostico }}{% endif %}"
+        class="form-input border rounded w-full p-2" />
+</div>
+</div>
+<label class="form-label block font-medium mb-1">
+    Tipo de discapacidad:
+</label>
+
+<div class="flex flex-col">
+    <div class="flex items-center mb-2">
+        <input
+            type="checkbox"
+            name="tipo_discapacidad[]"
+            id="tipo_discapacidad_mental"
+            value="Mental"
+            class="form-checkbox"
+            {% if 'Mental' in rider.tipo_discapacidad %}checked{% endif %} />
+        <label for="tipo_discapacidad_mental" class="ml-2">Mental</label>
+    </div>
+    
+    <div class="flex items-center mb-2">
+        <input
+            type="checkbox"
+            name="tipo_discapacidad[]"
+            id="tipo_discapacidad_motora"
+            value="Motora"
+            class="form-checkbox"
+            {% if 'Motora' in rider.tipo_discapacidad %}checked{% endif %} />
+        <label for="tipo_discapacidad_motora" class="ml-2">Motora</label>
+    </div>
+    
+    <div class="flex items-center mb-2">
+        <input
+            type="checkbox"
+            name="tipo_discapacidad[]"
+            id="tipo_discapacidad_sensorial"
+            value="Sensorial"
+            class="form-checkbox"
+            {% if 'Sensorial' in rider.tipo_discapacidad %}checked{% endif %} />
+        <label for="tipo_discapacidad_sensorial" class="ml-2">Sensorial</label>
+    </div>
+    
+    <div class="flex items-center mb-2">
+        <input
+            type="checkbox"
+            name="tipo_discapacidad[]"
+            id="tipo_discapacidad_visceral"
+            value="Visceral"
+            class="form-checkbox"
+            {% if 'Visceral' in rider.tipo_discapacidad %}checked{% endif %} />
+        <label for="tipo_discapacidad_visceral" class="ml-2">Visceral</label>
+    </div>
+</div>
+<div
+			id="error-msg"
+			class="hidden text-red-500 mt-2"></div>
+<div class="flex justify-end pt-4">
+ <a href="{{url_for("riders.info", dni=rider.dni)}}" class="relative text-blue-400 hover:border hover:rounded-lg hover:bg-gray-100 px-4 py-2 mx-5 flex items-center transition duration-300 ease-in-out transform hover:scale-105 active:scale-95">
+    Cancelar
+  </a>
+  <button id="btnGuardar" type="submit" class="relative text-white hover:text-white hover:bg-blue-500 flex items-center border border-blue-500 rounded-lg bg-blue-400 p-2 transition duration-300 ease-in-out shadow-md transform hover:scale-105 active:scale-95" onclick="validateForm()">
+      <span class="material-symbols-outlined">save</span>
+      Guardar cambios
+  </button>
+</form>
+</div>
+
+<script>
+  const botonGuardar = document.getElementById('btnGuardar');
+
+  botonGuardar.addEventListener('click', function(event) {
+    validateForm(event);
+  });
+
+  function validateForm(event) {
+    const errorMsg = document.getElementById('error-msg');
+    let allFieldsValid = true;
+
+    errorMsg.classList.add('hidden');
+    errorMsg.textContent = '';
+
+    let tipoDiagnostico = document.getElementById('diagnostico_discapacidad').value;
+    if (tipoDiagnostico === 'otro') {
+      let otroDiagnostico = document.getElementById('otro_diagnostico').value;
+      if (otroDiagnostico === '') {
+        showError('Debe especificar el diagnóstico');
+        allFieldsValid = false;
+      }
+    }
+
+    let checkboxes = document.querySelectorAll('input[type="checkbox"][name="tipo_discapacidad[]"]');
+    let checkedOne = Array.from(checkboxes).some((x) => x.checked);
+    if (!checkedOne) {
+      showError('Debe seleccionar al menos un tipo de discapacidad');
+      allFieldsValid = false;
+    }
+
+    let birthDate = document.getElementById('fecha_nacimiento').value;
+    if (new Date(birthDate) > new Date()) {
+      showError('La fecha de nacimiento no puede ser mayor a la fecha actual');
+      allFieldsValid = false;
+    }
+
+    if (!allFieldsValid) {
+      event.preventDefault();
+    }
+  }
+
+  function showError(message) {
+    const errorMsg = document.getElementById('error-msg');
+    errorMsg.textContent = message;
+    errorMsg.classList.remove('hidden');
+  }
+
+  function toggleDiagnosis() {
+    const tieneCertificadoSelect = document.getElementById('certificado_discapacidad');
+    const diagnosticoContainer = document.getElementById('diagnostico_discapacidad_container');
+    
+    if (tieneCertificadoSelect.value === "true") {
+      diagnosticoContainer.classList.remove('hidden');
+      diagnosticoContainer.classList.add('block');
+    } else {
+      diagnosticoContainer.classList.remove('block');
+      diagnosticoContainer.classList.add('hidden');
+    }
+    toggleOtherDiagnosis();  
+  }
+
+  function toggleOtherDiagnosis() {
+    const diagnosisSelect = document.getElementById('diagnostico_discapacidad');
+    const otherDiagnosisDiv = document.getElementById('other_diagnosis');
+    
+    if (diagnosisSelect.value === "otro") {
+      otherDiagnosisDiv.classList.remove('hidden');
+      otherDiagnosisDiv.classList.add('block');
+    } else {
+      otherDiagnosisDiv.classList.remove('block');
+      otherDiagnosisDiv.classList.add('hidden');
+    }
+  }
+
+  toggleDiagnosis();
+</script>
+{% endblock %}

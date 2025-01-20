@@ -1,0 +1,128 @@
+{% extends "layout.html" %}
+{%block title%}
+  Reportes
+{%endblock%}
+{% block content %}
+  <select name="report_type" id="report_type" class=" p-2 border border-gray-300 rounded-md">
+    <option value="0">Seleccione un reporte</option>
+    <option value="1">Miembros Activos e Inactivos por Condici&oacute;n</option>
+    <option value="2">Pagos por Tipo (Honorarios, Proveedor, Gastos Varios)</option>
+    <option value="3">Ranking de Actividades Terap&eacute;uticas</option>
+    {% if check_permission(session,"charge_index") %}
+      <option value="4">Personas con Pagos Pendientes</option>
+    {% endif %}
+    <option value="5">Caballos Activos por Sede y Tipo de actividad</option>
+  </select>
+  <div class="report-view hidden w-full items-center justify-center" id="active_members_report">
+    {% if active_members%}
+      <div>
+        {% for condition in conditions %}
+          <div class="p-4 bg-gray-100 font-semibold text-sm uppercase text-gray-700 tracking-wider border-b border-gray-300">
+            Condicion - {{ condition.value }}
+          </div>
+          <p class="m-4">Cantidad de empleados: {{active_members[condition]}}</p>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div>
+        No hay miembros activos por condicion.
+      </div>
+    {% endif %}
+  </div>
+  <div class="report-view hidden w-full items-center justify-center" id="payment_count_report">
+    {% if payments_count %}
+    <div>
+      {% for types in payment_types %}
+        <div class="p-4 bg-gray-100 font-semibold text-sm uppercase text-gray-700 tracking-wider border-b border-gray-300">
+          Tipo de pago - {{ types.value }}
+        </div>
+        <p class="m-4"> Cantidad de pagos: {{ payments_count[types] }}</p>
+      {% endfor %}
+    </div>
+    {% else %}
+      <div>
+        No hay pagos registrados.
+      </div>
+    {% endif %}
+  </div>
+  <div class="report-view hidden w-full items-center justify-center" id="job_count_report">
+    {% if job_count %}
+    <div>
+      {% for job_type in job_types %}
+        <div class="p-4 bg-gray-100 font-semibold text-sm uppercase text-gray-700 tracking-wider border-b border-gray-300">
+          Actividad - {{ job_type.value }}
+        </div>
+        <p class="m-4">Cantidad de personas: {{ job_count[job_type] }}</p>
+      {% endfor %}
+    </div>
+    {% else %}
+      <div>
+        No hay personal en las actividades terapeuticas.
+      </div>
+    {% endif %}
+  </div>
+  <div class="report-view hidden w-full items-center justify-center flex flex-col" id="riders_debtors_report">
+    {% if riders_debt %}
+      {% for debt in riders_debt %}
+      <a href="{{ url_for('modulo_cobros.listado',page_receive=0)}}" class="p-2 bg-red-300 border border-gray-200 rounded-md shadow-sm mb-4">
+        {{ debt.dni_equitador }} - {{ debt.nombre }} {{ debt.apellido }} debe: ${{ debt.total_monto * -1 }}
+      </a>
+      {% endfor %}
+    {% else %}
+      <div>
+        No hay deudores
+      </div>
+    {% endif %}
+  </div>
+  <div class="report-view hidden w-full items-center justify-center" id="active_horses_report">
+    {% if active_horses %}
+      <div>
+        {% for sede in sedes %}
+          <div class="p-4 bg-gray-100 font-semibold text-sm uppercase text-gray-700 tracking-wider border-b border-gray-300">
+            Sede - {{ sede.value }}
+          </div>
+          <div class="grid grid-cols-1 gap-4 p-4">
+            {% for activity in active_horses[sede] %}
+              <div class="p-2 bg-white border border-gray-200 rounded-md shadow-sm">
+                {{ activity.value }} - {{ active_horses[sede][activity] }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="text-gray-500 text-center p-4">
+        No hay caballos las sedes activos.
+      </div>
+    {% endif %}
+  </div>
+
+  <script defer>
+    document.addEventListener('DOMContentLoaded', function() {
+      const select = document.getElementById('report_type')
+      const reports = {
+        1: document.getElementById('active_members_report'),
+        2: document.getElementById('payment_count_report'),
+        3: document.getElementById('job_count_report'),
+        4: document.getElementById('riders_debtors_report'),
+        5: document.getElementById('active_horses_report')
+      };
+
+      function hideAllReports() {
+        Object.values(reports).forEach(report => report.style.display = 'none')
+      }
+
+      select.addEventListener('change', function() {
+        hideAllReports()
+        const selectedReport = reports[select.value];
+        if (selectedReport) {
+          selectedReport.style.display = 'flex'
+        }
+      })
+
+      hideAllReports()
+    })
+  </script>
+
+{% endblock%}
+

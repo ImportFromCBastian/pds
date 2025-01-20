@@ -1,0 +1,96 @@
+{% extends "layout.html" %} {% block title %}Editar Equipo{% endblock %} {%
+block head %} {{super()}} {% endblock %} {% block content %}
+<a
+	class="flex rounded-md relative w-fit"
+	href="{{url_for('payments.index')}}"
+	alt="volver a pagos">
+	<span class="material-symbols-outlined"> arrow_back </span>
+	<span class="material-symbols-outlined"> groups </span>
+</a>
+<h1 class="text-center text-2xl font-bold my-5">
+	Editar pago del beneficiario "{{ payment.employee.nombre }}"
+</h1>
+<div class="w-full max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md">
+	{% if errors %} {% for error in errors %}
+	<div
+		class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+		role="alert">
+		<strong class="font-bold">Error!</strong>
+		<span class="block sm:inline">{{ errors }}</span>
+	</div>
+	{% endfor %} {% endif %}
+
+	<form
+		class="flex flex-col space-y-6 my-6"
+		method="post">
+		<div class="min-w-[120px] w-full sm:w-auto">
+			<label
+				for="monto"
+				class="form-label mb-2 block"
+				>Monto</label
+			>
+			<input
+				type="number"
+				id="monto"
+				placeholder="{{ payment.monto }}"
+				name="monto"
+				class="form-input p-2 w-full border border-gray-300 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" />
+		</div>
+		<div class="min-w-[120px] w-full sm:w-auto">
+			<label
+				for="descripcion"
+				class="form-label mb-2 block"
+				>Descripcion</label
+			>
+			<input
+				type="text"
+				id="descripcion"
+				name="form-input p-2 descripcion"
+				placeholder="{{payment.descripcion}}"
+				class="form-input p-2 w-full border border-gray-300" />
+		</div>
+		<div class="min-w-[120px] w-full sm:w-auto">
+			<label
+				for="tipo_pago"
+				class="form-label mb-2 block"
+				>Tipo de pago</label
+			>
+			<select
+				id="tipo_pago"
+				name="tipo_pago"
+				class="form-input p-2 w-full border border-gray-300">
+				<option value="">Elige una opción...</option>
+				{% for types in payment_type %}
+				<option value="{{ types.name }}">{{ types.value }}</option>
+				{% endfor %}
+			</select>
+		</div>
+		<div class="min-w-[120px] w-full sm:w-auto">
+			<label
+				for="fecha_pago"
+				class="form-label mb-2 block"
+				>Fecha de pago</label
+			>
+			<input
+				type="date"
+				id="fecha_pago"
+				name="fecha_pago"
+				class="form-input p-2 w-full border border-gray-300" />
+		</div>
+		<div class="flex self-end">
+			<a
+				href="{{url_for('payments.index')}}"
+				class="relative text-blue-400 hover:border hover:rounded-lg hover:bg-gray-100 px-4 py-2 mx-5 flex items-center transition duration-300 ease-in-out transform hover:scale-105 active:scale-95">
+				Cancel
+			</a>
+			<button
+				type="submit"
+				class="relative text-white hover:text-white hover:bg-blue-500 flex items-center border border-blue-500 rounded-lg bg-blue-400 p-2 transition duration-300 ease-in-out shadow-md transform hover:scale-105 active:scale-95">
+				<span class="material-symbols-rounded"> save </span>
+				Guardar cambios
+			</button>
+		</div>
+	</form>
+</div>
+
+{% endblock %}

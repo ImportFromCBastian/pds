@@ -1,0 +1,131 @@
+{% extends "layout.html"%} {% block title %}Crear pago{% endblock %} {% block
+head %} {{super()}} {% endblock %} {% block content %}
+<a
+	class="flex rounded-md relative w-fit"
+	href="{{url_for('payments.index')}}"
+	alt="volver a pagos">
+	<span class="material-symbols-outlined"> arrow_back </span>
+	<span class="material-symbols-outlined"> groups </span>
+</a>
+<h1 class="text-center text-2xl font-bold my-4">
+	Agregando pago a beneficiario
+</h1>
+<div class="w-full max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
+	<form
+		action="{{url_for('payments.create')}}"
+		method="post"
+		class="flex flex-col space-y-3">
+		<div class="flex flex-col gap-4">
+			<div class="flex-1 min-w-[120px] w-full sm:w-auto">
+				<label
+					for="beneficiario"
+					class="mb-2 block form-label"
+					>Beneficiario</label
+				>
+				<select
+					id="beneficiario"
+					name="beneficiario"
+					class="w-full border border-gray-300 form-input">
+					<option value="">Elige una opción...</option>
+					{% for member in team %}
+					<option value="{{ member.dni }}">
+						{{member.dni}} - {{ member.nombre }} {{member.apellido}}
+					</option>
+					{% endfor %}
+				</select>
+				{% if errors.get('beneficiario') %}
+				<p class="text-red-500 text-xs italic">
+					{{ styled(errors['beneficiario']) }}
+				</p>
+				{% endif %}
+			</div>
+			<div class="flex-1 min-w-[120px] w-full sm:w-auto">
+				<label
+					for="monto"
+					class="mb-2 block form-label"
+					>Monto ($)</label
+				>
+				<input
+					type="number"
+					step="0.01"
+					min="0"
+					id="monto"
+					name="monto"
+					class="w-full border border-gray-300 form-input [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" />
+				{% if errors.get('monto') %}
+				<p class="text-red-500 text-xs italic">{{ styled(errors['monto']) }}</p>
+				{% endif %}
+			</div>
+			<div class="flex-1 min-w-[120px] w-full sm:w-auto">
+				<label
+					for="fecha_pago"
+					class="mb-2 block form-label"
+					>Fecha de pago</label
+				>
+				<input
+					type="date"
+					id="fecha_pago"
+					name="fecha_pago"
+					class="w-full border border-gray-300 form-input" />
+				{% if errors.get('fecha_pago') %}
+				<p class="text-red-500 text-xs italic">
+					{{ styled(errors['fecha_pago']) }}
+				</p>
+				{% endif %}
+			</div>
+			<div class="flex-1 min-w-[120px] w-full sm:w-auto">
+				<label
+					for="tipo_pago"
+					class="mb-2 block form-label"
+					>Tipo de pago</label
+				>
+				<select
+					id="tipo_pago"
+					name="tipo_pago"
+					class="w-full border border-gray-300 form-input">
+					<option value="">Elige una opción...</option>
+					{% for types in payment_type %}
+					<option value="{{ types.name }}">{{ types.value }}</option>
+					{% endfor %}
+				</select>
+				{% if errors.get('tipo_pago') %}
+				<p class="text-red-500 text-xs italic">
+					{{ styled(errors['tipo_pago']) }}
+				</p>
+				{% endif %}
+			</div>
+			<div class="flex-1 min-w-[120px] w-full sm:w-auto">
+				<label
+					for="descripcion"
+					class="mb-2 block form-label"
+					>Descripcion</label
+				>
+				<input
+					type="textarea"
+					id="descripcion"
+					name="descripcion"
+					class="w-full border border-gray-300 form-input"
+        />
+				{% if errors.get('descripcion') %}
+				<p class="text-red-500 text-xs italic">
+					{{ styled(errors['descripcion']) }}
+				</p>
+				{% endif %}
+			</div>
+			<div class="flex self-end">
+				<a
+					href="{{url_for('payments.index')}}"
+					class="relative text-blue-400 hover:border hover:rounded-lg hover:bg-gray-100 px-4 py-2 mx-5 flex items-center transition duration-300 ease-in-out transform hover:scale-105 active:scale-95">
+					Cancelar
+				</a>
+				<button
+					type="submit"
+					class="relative text-white hover:text-white hover:bg-blue-500 flex items-center border border-blue-500 rounded-lg bg-blue-400 p-2 transition duration-300 ease-in-out shadow-md transform hover:scale-105 active:scale-95">
+					<span class="material-symbols-rounded">save</span>
+					Guardar
+				</button>
+			</div>
+		</div>
+	</form>
+</div>
+{% endblock %}

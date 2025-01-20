@@ -1,0 +1,47 @@
+/* Estilo para el contenedor de error */
+.error-container {
+	text-align: center;
+	padding: 2rem;
+	max-width: 600px;
+	margin: 0 auto;
+}
+
+/* Estilo para el código de error */
+.error-code {
+	font-size: 4rem;
+	font-weight: bold;
+	color: #e74c3c;
+	margin-bottom: 1rem;
+}
+
+/* Estilo para el mensaje de error principal */
+.error-message {
+	font-size: 2rem;
+	font-weight: 600;
+	margin-bottom: 1rem;
+}
+
+/* Estilo para el mensaje secundario o detalles adicionales */
+.error-details {
+	font-size: 1rem;
+	font-weight: 400;
+	color: #555;
+	margin-bottom: 2em;
+}
+
+/* Estilo para el botón de regreso a la página principal o anterior */
+.error-button {
+	display: inline-block;
+	padding: 0.875rem 1.5rem;
+	font-size: 1rem;
+	font-weight: 600;
+	color: #fff;
+	background-color: #3498db;
+	border-radius: 4px;
+	text-decoration: none;
+	transition: background-color 0.3s ease;
+}
+
+.error-button:hover {
+	background-color: #2980b9;
+}

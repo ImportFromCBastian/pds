@@ -1,0 +1,344 @@
+{% extends "layout.html" %} {% block title %}Inicia sesión{% endblock %} {%
+block head %} {{ super() }} {% endblock %} {% block content %}
+
+<h1 class="heading">Iniciá sesión</h1>
+<div class="relative mx-auto w-50 h-60" id="caballo-container">
+  <img
+    src="{{ url_for('static', filename='images/caballo/marco.png') }}"
+    alt="marco"
+    class="absolute w-full h-full object-contain top-0 left-0"
+    style="z-index: 5"
+  />
+  <div class="relative mx-auto w-50 h-60">
+    <img
+      src="{{ url_for('static', filename='images/caballo/caballo.png') }}"
+      alt="caballo"
+      class="w-full h-full object-contain"
+      style="position: relative; z-index: 1"
+    />
+    <img
+      src="{{ url_for('static', filename='images/caballo/pupilas.png') }}"
+      alt="pupilas"
+      class="absolute top-0 left-0 w-full h-full object-contain"
+      style="z-index: 2"
+      id="pupilas"
+    />
+    <img
+      src="{{ url_for('static', filename='images/caballo/boca_abre.gif') }}"
+      alt="boca"
+      class="absolute w-full h-full object-contain top-0 left-0"
+      style="z-index: 3; display: none"
+      id="boca-gif"
+    />
+    <img
+      src="{{ url_for('static', filename='images/caballo/boca_cierre.gif') }}"
+      alt="boca-cierre"
+      class="absolute w-full h-full object-contain top-0 left-0"
+      style="z-index: 3; display: none"
+      id="boca-cierre-gif"
+    />
+    <img
+      src="{{ url_for('static', filename='images/caballo/pata_derecha.png') }}"
+      alt="pata derecha"
+      class="absolute w-full h-full object-contain top-14"
+      style="z-index: 4; display: none"
+      id="pata-derecha"
+    />
+    <img
+      src="{{ url_for('static', filename='images/caballo/pata_izquierda.png') }}"
+      alt="pata izquierda"
+      class="absolute w-full h-full object-contain top-14"
+      style="z-index: 4; display: none"
+      id="pata-izquierda"
+    />
+  </div>
+</div>
+
+<form
+  class="w-full sm:max-w-lg md:max-w-xl lg:max-w-5xl mx-auto p-6 rounded-md"
+  action="{{ url_for('authenticate') }}"
+  method="post"
+  oncontextmenu="return false;"
+>
+  <div class="mb-6">
+    <label for="email" class="form-label"> Correo electrónico </label>
+    <input
+      type="email"
+      placeholder="ejemplo@mail.com"
+      name="email"
+      id="email"
+      class="form-input w-full sm:w-auto md:w-96"
+    />
+  </div>
+  <div class="mb-6">
+    <label for="password" class="form-label"> Contraseña </label>
+    <div class="relative w-full sm:w-auto md:w-96">
+      <input
+        type="password"
+        name="contrasenia"
+        id="password"
+        class="form-input w-full pr-10"
+      />
+      <button
+        id="toggle-password"
+        type="button"
+        class="absolute inset-y-0 right-0 flex items-center px-3"
+      >
+        <span class="material-symbols-outlined">visibility</span>
+      </button>
+    </div>
+  </div>
+
+  <button type="submit" class="submit-button w-full">Iniciar sesión</button>
+
+  <div class="flex items-center my-6 text-gray-500">
+    <div class="flex-1 border-t border-gray-500"></div>
+    <span class="mx-4">O</span>
+    <div class="flex-1 border-t border-gray-500"></div>
+  </div>
+
+  <div class="flex justify-center mt-8">
+    <a
+      href="{{ url_for('google_login') }}"
+      class="inline-flex items-center justify-center bg-white text-gray-600 font-medium text-sm py-3 w-full border border-gray-300 rounded shadow-sm hover:shadow-md active:shadow-sm transition-shadow duration-200"
+    >
+      <img
+        src="https://www.gstatic.com/images/branding/product/1x/gsa_48dp.png"
+        alt="Google Icon"
+        class="h-5 w-5 mr-2"
+      />
+      Acceder con Google
+    </a>
+  </div>
+</form>
+
+<div
+  id="registerModal"
+  class="fixed top-0 left-0 right-0 flex items-start justify-center bg-transparent hidden z-50"
+>
+  <div class="bg-white p-6 rounded-lg shadow-lg w-full sm:w-96 max-w-lg mt-10">
+    <p class="text-lg text-gray-700 mb-4">
+      Usuario no encontrado, ¿desea registrarse?
+    </p>
+    <p class="text-gray-500 mb-4">
+      Correo: <span id="userEmail">{{ session['new_user_email'] }}</span>
+    </p>
+    <div class="flex justify-end space-x-4">
+      <button
+        id="acceptBtn"
+        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+      >
+        Aceptar
+      </button>
+      <button
+        id="cancelBtn"
+        class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+      >
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.onload = function () {
+    var newUserEmail = "{{ session['new_user_email'] }}";
+
+    if (newUserEmail !== "") {
+      var modal = document.getElementById("registerModal");
+      modal.classList.remove("hidden");
+
+      document.getElementById("acceptBtn").onclick = function () {
+        window.location.href = "{{ url_for('login_send') }}";
+        flash("Se han enviado los datos para su registro", "success");
+      };
+
+      document.getElementById("cancelBtn").onclick = function () {
+        modal.classList.add("hidden");
+        window.location.href = "{{ url_for('cancel_registration') }}";
+      };
+    }
+  };
+</script>
+
+<script defer>
+  const emailInput = document.getElementById("email");
+  const pupilas = document.getElementById("pupilas");
+  const gif = document.getElementById("boca-gif");
+  const gifCierre = document.getElementById("boca-cierre-gif");
+  let currentX = -3;
+  let currentY = 3;
+  const maxMovement = 3.1;
+  let gifVisible = false;
+  const passwordInput = document.getElementById("password");
+  const pataDerecha = document.getElementById("pata-derecha");
+  const pataIzquierda = document.getElementById("pata-izquierda");
+  const togglePassword = document.getElementById("toggle-password");
+  let pataVisible = false;
+  let pataEspiando = false;
+  let currentXPassword = -3;
+  let currentYPassword = 3;
+
+  emailInput.addEventListener("input", (event) => {
+    const inputValue = event.target.value;
+
+    currentX = Math.min(-3 + inputValue.length * 0.2, maxMovement);
+
+    pupilas.style.transform = `translate(${currentX}px, ${currentY}px)`;
+    if (inputValue.includes("@")) {
+      if (!gifVisible) {
+        gif.src = "";
+        gif.src =
+          "{{ url_for('static', filename='images/caballo/boca_abre.gif') }}";
+        gif.style.display = "block";
+        gifCierre.style.display = "none";
+        gifVisible = true;
+      }
+    } else {
+      if (gifVisible) {
+        gif.style.display = "none";
+        gifCierre.style.display = "block";
+        gif.src = "";
+        gif.src =
+          "{{ url_for('static', filename='images/caballo/boca_cierre.gif') }}";
+        gifVisible = false;
+      }
+    }
+  });
+
+  emailInput.addEventListener("focus", () => {
+    pupilas.style.transform = `translate(${currentX}px, ${currentY}px)`;
+    if (emailInput.value.includes("@") && !gifVisible) {
+      gif.src =
+        "{{ url_for('static', filename='images/caballo/boca_abre.gif') }}";
+      gif.style.display = "block";
+      gifCierre.style.display = "none";
+      gifVisible = true;
+    }
+  });
+
+  emailInput.addEventListener("blur", () => {
+    pupilas.style.transform = "translate(0, 0)";
+    gif.style.display = "none";
+    gifCierre.style.display = "block";
+    gif.src = "";
+    gif.src =
+      "{{ url_for('static', filename='images/caballo/boca_cierre.gif') }}";
+    gifVisible = false;
+  });
+  passwordInput.addEventListener("input", (event) => {
+    const inputValue = event.target.value;
+
+    currentXPassword = Math.min(-3 + inputValue.length * 0.2, maxMovement);
+
+    pupilas.style.transform = `translate(${currentXPassword}px, ${currentYPassword}px)`;
+  });
+
+  passwordInput.addEventListener("focus", () => {
+    pupilas.style.transform = `translate(${currentXPassword}px, ${currentYPassword}px)`;
+    if (!pataVisible) {
+      pataVisible = true;
+      pataDerecha.style.display = "block";
+      pataIzquierda.style.display = "block";
+      eliminarTodo(pataDerecha);
+      eliminarTodo(pataIzquierda);
+      if (pataEspiando) {
+        pataIzquierda.classList.add("pata-espiar-desde-abajo");
+      } else {
+        pataIzquierda.classList.add("pata-visible");
+      }
+      pataDerecha.classList.add("pata-visible");
+    }
+  });
+  togglePassword.addEventListener("mousedown", function (event) {
+    event.preventDefault();
+  });
+  togglePassword.addEventListener("mouseup", function () {
+    pupilas.style.transform = `translate(${currentXPassword}px, ${currentYPassword}px)`;
+    const type =
+      passwordInput.getAttribute("type") === "password" ? "text" : "password";
+    passwordInput.setAttribute("type", type);
+
+    const icon = togglePassword.querySelector(".material-symbols-outlined");
+    icon.textContent = type === "password" ? "visibility" : "visibility_off";
+
+    eliminarTodo(pataIzquierda);
+    pataDerecha.style.display = "block";
+    pataIzquierda.style.display = "block";
+    if (type === "text") {
+      pataEspiando = true;
+      if (pataVisible) {
+        pataIzquierda.classList.add("pata-espiar-desde-tapar");
+      } else {
+        pataIzquierda.classList.add("pata-espiar-desde-abajo");
+        eliminarTodo(pataDerecha);
+        pataDerecha.classList.add("pata-visible");
+      }
+      pataVisible = true;
+    } else {
+      pataEspiando = false;
+      if (pataVisible) {
+        pataIzquierda.classList.add("pata-tapar-desde-espiar");
+      } else {
+        pataIzquierda.classList.add("pata-visible");
+        eliminarTodo(pataDerecha);
+        pataDerecha.classList.add("pata-visible");
+      }
+      pataVisible = true;
+    }
+  });
+
+  passwordInput.addEventListener("blur", () => {
+    if (!togglePassword.contains(document.activeElement)) {
+      ocultarPatas();
+      pupilas.style.transform = "translate(0, 0)";
+    }
+  });
+
+  function ocultarPatas() {
+    pataVisible = false;
+    eliminarTodo(pataIzquierda);
+    eliminarTodo(pataDerecha);
+    pataDerecha.classList.add("pata-invisible");
+
+    if (pataEspiando) {
+      pataIzquierda.classList.add("pata-bajar-de-espiar");
+    } else {
+      pataIzquierda.classList.add("pata-invisible");
+    }
+
+    setTimeout(() => {
+      pataDerecha.style.display = "none";
+      pataIzquierda.style.display = "none";
+    }, 500);
+  }
+
+  document.addEventListener("click", (event) => {
+    const isClickInsidePassword = passwordInput.contains(event.target);
+    const isClickInsideToggle = togglePassword.contains(event.target);
+    const isClickInsideEmail = emailInput.contains(event.target);
+
+    if (!isClickInsidePassword && !isClickInsideToggle) {
+      ocultarPatas();
+      if (!isClickInsideEmail) {
+        pupilas.style.transform = "translate(0, 0)";
+      }
+    }
+  });
+
+  function eliminarTodo(pata) {
+    pata.classList.remove("pata-visible");
+    pata.classList.remove("pata-invisible");
+    pata.classList.remove("pata-espiar-desde-tapar");
+    pata.classList.remove("pata-espiar-desde-abajo");
+    pata.classList.remove("pata-bajar-de-espiar");
+    pata.classList.remove("pata-tapar-desde-espiar");
+  }
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => {
+      passwordInput.focus();
+    }, 100);
+  });
+</script>
+
+{% endblock %}

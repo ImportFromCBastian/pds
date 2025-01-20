@@ -1,0 +1,82 @@
+{% extends "layout.html" %} {% block title %}Editar Jinete/Amazona{% endblock %}
+{% block content %}
+<a class="flex w-fit rounded-md  relative" href="{{url_for('riders.info', dni=rider.dni)}}" alt="volver al listado">
+  <span class="mr-2 material-symbols-outlined">
+    arrow_back
+  </span>
+  <span class="material-symbols-rounded">
+    person
+  </span>
+  </a>
+<h1 class="text-center text-2xl font-bold p-4">
+  Editando situación previsional de "{{rider.nombre}} {{rider.apellido}} "
+	</h1>
+
+<div class="w-full max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md">
+
+
+
+	<form
+		class="flex flex-col space-y-3"
+		method="post"
+    >
+			<div>
+				<label
+					for="obra_social"
+					class="form-label block font-medium mb-1">
+					Nombre de la Obra social:
+				</label>
+				<input
+					type="text"
+					name="obra_social"
+					id="obra_social"
+					value="{{ rider.situacion_previsional.obra_social }}"
+					class="form-input border rounded w-full p-2"
+					required />
+			</div>
+			<div>
+				<label
+					for="numero_afiliado"
+					class="form-label block font-medium mb-1">
+					Número de afiliado:
+				</label>
+				<input
+					type="number"
+					name="numero_afiliado"
+					id="numero_afiliado"
+					value="{{ rider.situacion_previsional.numero_afiliado }}"
+					class="form-input border rounded w-full p-2  [&::-webkit-outer-spin-button]:appearance-none""
+					required />
+			</div>
+			<div>
+				<label for="tiene_curatela" class="form-label block font-medium mb-1">Tiene curatela</label>
+          <select name="tiene_curatela" id="tiene_curatela" class="form-input border rounded w-full p-2">
+            <option value="false" {% if not rider.tiene_curatela %}selected{% endif %}>No</option>
+            <option value="true" {% if rider.tiene_curatela %}selected{% endif %}>Sí</option>
+        </select>
+      </div>  
+      <div>
+	<label
+					for="observaciones"
+					class="form-label block font-medium mb-1">
+					Observaciones:
+				</label>
+       <input
+        type="text"
+        name="observaciones"
+        id="observaciones"
+        value="{% if rider.situacion_previsional.observaciones %}{{ rider.situacion_previsional.observaciones }}{% endif %}"
+        class="form-input border rounded w-full p-2" />
+			</div>
+<div class="flex justify-end pt-4">
+  <a href="{{url_for("riders.info", dni=rider.dni)}}" class="relative text-blue-400 hover:border hover:rounded-lg hover:bg-gray-100 px-4 py-2 mx-5 flex items-center transition duration-300 ease-in-out transform hover:scale-105 active:scale-95">
+      Cancelar
+  </a>
+  <button type="submit" class="relative text-white hover:text-white hover:bg-blue-500 flex items-center border border-blue-500 rounded-lg bg-blue-400 p-2 transition duration-300 ease-in-out shadow-md transform hover:scale-105 active:scale-95">
+      <span class="material-symbols-outlined">save</span>
+			Guardar cambios
+  </button>
+</form>
+</div>
+
+{% endblock %}

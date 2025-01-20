@@ -1,0 +1,1049 @@
+{% extends "layout.html" %} {% block title %}Editar Jinete/Amazona{% endblock %}
+{% block content %}
+<a class="flex w-fit rounded-md py-2 relative" href="{{url_for('riders.index')}}" alt="volver al listado">
+  <span class="mr-2 material-symbols-outlined">
+    arrow_back
+  </span>
+  <span class="material-symbols-rounded">
+    groups
+  </span>
+  </a>
+<h1 class="text-center text-2xl font-bold mb-2">
+	Agregando un nuevo Jinete/Amazona
+</h1>
+<div class="w-full max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md">
+	<form
+		action="{{ url_for('riders.createRider') }}"
+		method="POST"
+    onsubmit=" validateFormStep(event)"
+		class="flex flex-col space-y-3"
+		id="riderForm">
+		<!-- Parte 1: Información Personal -->
+		<div
+			id="personalInfo"
+			class="form-step"
+			style="display: none">
+			<h2 class="text-lg font-bold">Información Personal</h2>
+
+			<div>
+				<label
+					for="nombre"
+					class="form-label block font-medium mb-1"
+					>Nombre:</label
+				>
+				<input
+					type="text"
+					name="nombre"
+					id="nombre"
+          pattern="^[A-Za-zÀ-ÿ\s]+$"  
+          title="Por favor, ingrese un nombre válido"
+					class="form-input border rounded w-full p-2"
+					required />
+			</div>
+			<div>
+				<label
+					for="apellido"
+					class="form-label block font-medium mb-1"
+					>Apellido:</label
+				>
+				<input
+					type="text"
+					name="apellido"
+					id="apellido"
+          pattern="^[A-Za-zÀ-ÿ\s]+$"  
+          title="Por favor, ingrese un nombre válido"
+					class="form-input border rounded w-full p-2"
+					required />
+			</div>
+			<div>
+				<label
+					for="dni"
+					class="form-label block font-medium mb-1"
+					>DNI:</label
+				>
+				<input
+					type="tel"
+					name="dni"
+					id="dni"
+          pattern="[0-9]{7,8}"
+				  maxlength="8"
+				  title="Por favor, ingrese un DNI válido"
+					class="form-input border rounded w-full p-2 [&::-webkit-inner-spin-button]:appearance-none"
+					required />
+			</div>
+			<div>
+				<label
+					for="fecha_nacimiento"
+					class="form-label block font-medium mb-1"
+					>Fecha de Nacimiento:</label
+				>
+				<input
+					type="date"
+					name="fecha_nacimiento"
+					id="fecha_nacimiento"
+          max="{{ fecha_actual.strftime('%Y-%m-%d') }}" 
+					class="form-input border rounded w-full p-2"
+					required />
+			</div>
+			<div>
+				<label
+					for="lugar_nacimiento"
+					class="form-label block font-medium mb-1"
+					>Lugar de Nacimiento:</label
+				>
+				<input
+					type="text"
+					name="lugar_nacimiento"
+					id="lugar_nacimiento"
+					class="form-input border rounded w-full p-2"
+					required />
+			</div>
+			<div>
+				<label
+					for="certificado_discapacidad"
+					class="form-label block font-medium mb-1"
+					>Tiene certificado de discapacidad:</label
+				>
+				<select
+					name="certificado_discapacidad"
+					id="certificado_discapacidad"
+					class="form-input border rounded w-full p-2"
+					onchange="toggleDiagnosis()">
+					<option value="false">No</option>
+					<option value="true">Sí</option>
+				</select>
+
+				<div
+					id="diagnostico_discapacidad_container"
+					class="{% if tiene_certificado == true %}block{% else %}hidden{% endif %}">
+					<label
+						for="diagnostico_discapacidad"
+						class="form-label block font-medium mb-1"
+						>Diagnóstico discapacidad:</label
+					>
+					<select
+						name="diagnostico_discapacidad"
+						id="diagnostico_discapacidad"
+						class="form-input border rounded w-full p-2"
+						onchange="toggleOtherDiagnosis()">
+						<option
+							value=""
+							disabled>
+							Seleccione un diagnóstico
+						</option>
+						{% for diagnosis in DiagnosisType %}
+						<option value="{{ diagnosis.name }}">{{ diagnosis.value }}</option>
+						{% endfor %}
+					</select>
+
+					<div
+						id="other_diagnosis"
+						class="{% if diagnostico_discapacidad == DiagnosisType.otro %}block{% else %}hidden{% endif %}">
+						<label
+							for="otro_diagnostico"
+							class="form-label block font-medium mb-1"
+							>Especifique el diagnóstico:</label
+						>
+						<input
+							type="text"
+							name="otro_diagnostico"
+							id="otro_diagnostico"
+							class="form-input border rounded w-full p-2" />
+					</div>
+				</div>
+
+				<label
+					for="tipo_discapacidad"
+					class="form-label block font-medium mb-1"
+					>Tipo de discapacidad:</label
+				>
+				<div class="flex flex-col">
+					<div class="flex items-center mb-2">
+						<input
+							type="checkbox"
+							name="tipo_discapacidad[]"
+							id="tipo_discapacidad_mental"
+							value="Mental"
+							class="form-checkbox" />
+						<label
+							for="tipo_discapacidad_mental"
+							class="ml-2"
+							>Mental</label
+						>
+					</div>
+					<div class="flex items-center mb-2">
+						<input
+							type="checkbox"
+							name="tipo_discapacidad[]"
+							id="tipo_discapacidad_motora"
+							value="Motora"
+							class="form-checkbox" />
+						<label
+							for="tipo_discapacidad_motora"
+							class="ml-2"
+							>Motora</label
+						>
+					</div>
+					<div class="flex items-center mb-2">
+						<input
+							type="checkbox"
+							name="tipo_discapacidad[]"
+							id="tipo_discapacidad_sensorial"
+							value="Sensorial"
+							class="form-checkbox" />
+						<label
+							for="tipo_discapacidad_sensorial"
+							class="ml-2"
+							>Sensorial</label
+						>
+					</div>
+					<div class="flex items-center mb-2">
+						<input
+							type="checkbox"
+							name="tipo_discapacidad[]"
+							id="tipo_discapacidad_visceral"
+							value="Visceral"
+							class="form-checkbox" />
+						<label
+							for="tipo_discapacidad_visceral"
+							class="ml-2"
+							>Visceral</label
+						>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Parte 2: Datos de Contacto -->
+		<div
+			id="contactInfo"
+			class="form-step"
+			style="display: none">
+			<h2 class="text-lg font-bold">Datos de Contacto</h2>
+			<div>
+				<label
+					for="domicilio_actual"
+					class="form-label block font-medium mb-1"
+					>Domicilio Actual:</label
+				>
+				<input
+					type="text"
+					name="domicilio_actual"
+					id="domicilio_actual"
+					class="form-input border rounded w-full p-2"
+					required />
+			</div>
+			<div>
+				<label
+					for="telefono"
+					class="form-label block font-medium mb-1"
+					>Teléfono:</label
+				>
+				<input
+					type="text"
+					name="telefono"
+					id="telefono"
+          pattern="^\d{1,10}$"  
+          title="Por favor, ingrese un teléfono válido"
+          maxlength="10"  
+					class="form-input border rounded w-full p-2 [&::-webkit-inner-spin-button]:appearance-none"
+					required />
+			</div>
+			<div>
+				<label
+					for="numero_emergencia"
+					class="form-label block font-medium mb-1"
+					>Contacto de Emergencia:</label
+				>
+				<input
+					type="tel"
+					name="numero_emergencia"
+					id="numero_emergencia"
+          pattern="^\d{1,10}$"  
+          title="Por favor, ingrese un teléfono válido"
+          maxlength="10"  
+					class="form-input border rounded w-full p-2 [&::-webkit-inner-spin-button]:appearance-none"
+					required />
+			</div>
+			<div>
+				<label
+					for="nombre_emergencia"
+					class="form-label block font-medium mb-1"
+					>Nombre del contacto de Emergencia:</label
+				>
+				<input
+					type="text"
+					name="nombre_emergencia"
+					id="nombre_emergencia"
+					class="form-input border rounded w-full p-2"
+					required />
+			</div>
+		</div>
+
+		<!-- Parte 3: Datos académicos-->
+		<div
+			id="academicInfo"
+			class="form-step"
+			style="display: none">
+			<h2 class="text-lg font-bold">Datos académicos</h2>
+			<div>
+				<label
+					for="institucion_escolar_nombre"
+					class="form-label block font-medium mb-1">
+					Nombre de la Institución escolar:
+				</label>
+				<input
+					type="text"
+					name="institucion_escolar_nombre"
+          pattern="^[A-Za-zÀ-ÿ\s]+$"  
+          title="Por favor, ingrese un nombre válido"
+					id="institucion_escolar_nombre"
+					class="form-input border rounded w-full p-2"
+					required />
+			</div>
+			<div>
+				<label
+					for="telefono"
+					class="form-label block font-medium mb-1">
+					Teléfono:
+				</label>
+				<input
+					type="number"
+          pattern="^\d{1,10}$"  
+          title="Por favor, ingrese un teléfono válido"
+          maxlength="10"  
+					name="institucion_escolar_telefono"
+					id="institucion_escolar_telefono"
+					class="form-input border rounded w-full p-2 [&::-webkit-inner-spin-button]:appearance-none"
+					required />
+			</div>
+			<div>
+				<label
+					for="institucion_escolar_direccion"
+					class="form-label block font-medium mb-1">
+					Dirección:
+				</label>
+				<input
+					type="text"
+					name="institucion_escolar_direccion"
+					id="institucion_escolar_direccion"
+					class="form-input border rounded w-full p-2"
+					required />
+			</div>
+			<div>
+				<label
+					for="institucion_escolar_grado_actual"
+					class="form-label block font-medium mb-1">
+					Grado actual:
+				</label>
+				<input
+					type="text"
+					name="institucion_escolar_grado_actual"
+					id="institucion_escolar_grado_actual"
+					class="form-input border rounded w-full p-2"
+					required />
+			</div>
+			<div>
+				<label
+					for="institucion_escolar_observaciones"
+					class="form-label block font-medium mb-1">
+					Observaciones:
+				</label>
+				<input
+					type="text"
+					name="institucion_escolar_observaciones"
+					id="institucion_escolar_observaciones"
+					class="form-input border rounded w-full p-2" />
+			</div>
+		</div>
+		<!-- Parte 4: Información previsional-->
+		<div
+			id="provisionalInfo"
+			class="form-step"
+			style="display: none">
+			<h2 class="text-lg font-bold">Información previsional</h2>
+			<div>
+				<label
+					for="informacion_previsional_obra_social"
+					class="form-label block font-medium mb-1">
+					Nombre de la Obra social:
+				</label>
+				<input
+					type="text"
+					name="informacion_previsional_obra_social"
+					id="informacion_previsional_obra_social"
+					class="form-input border rounded w-full p-2"
+					required />
+			</div>
+			<div>
+				<label
+					for="informacion_previsional_numero_afiliado"
+					class="form-label block font-medium mb-1">
+					Número de afiliado:
+				</label>
+				<input
+					type="number"
+					name="informacion_previsional_numero_afiliado"
+					id="informacion_previsional_numero_afiliado"
+					class="form-input border rounded w-full p-2 [&::-webkit-inner-spin-button]:appearance-none"
+					required />
+			</div>
+			<div>
+				<label
+					for="informacion_previsional_tiene_curatela"
+					class="form-label block font-medium mb-1"
+					>Tiene curatela</label
+				>
+				<select
+					name="informacion_previsional_tiene_curatela"
+					id="informacion_previsional_tiene_curatela"
+					class="form-input border rounded w-full p-2">
+					<option value="false">No</option>
+					<option value="true">Sí</option>
+				</select>
+			</div>
+			<div>
+				<label
+					for="informacion_previsional_observaciones"
+					class="form-label block font-medium mb-1">
+					Observaciones:
+				</label>
+				<input
+					type="text"
+					name="informacion_previsional_observaciones"
+					id="informacion_previsional_observaciones"
+					class="form-input border rounded w-full p-2" />
+			</div>
+		</div>
+
+		<!-- Parte 5: Trabajo en la institución-->
+		<div
+			id="institutionalInfo"
+			class="form-step"
+			style="display: none">
+			<h2 class="text-lg font-bold">Trabajo en la institución</h2>
+			<div>
+				<label
+					for="trabajo_institucional_tipo_trabajo"
+					class="form-label block font-medium mb-1">
+					Tipo de trabajo:
+				</label>
+				<select
+					name="trabajo_institucional_tipo_trabajo"
+					id="trabajo_institucional_tipo_trabajo"
+					class="form-input border rounded w-full p-2">
+					<option
+						value=""
+						disabled>
+						Seleccione un tipo de trabajo
+					</option>
+
+					{% for propuesta in propuesta_trabajo %}
+					<option value="{{ propuesta.name }}">{{ propuesta.value }}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div>
+				<label
+					for="trabajo_institucional_condicion"
+					class="form-label block font-medium mb-1">
+					Condición:
+				</label>
+				<select
+					name="trabajo_institucional_condicion"
+					id="trabajo_institucional_condicion"
+					class="form-input border rounded w-full p-2">
+					<option
+						value=""
+						disabled>
+						Seleccione una condición
+					</option>
+
+					{% for condicion in condition %}
+					<option value="{{ condicion.name }}">{{ condicion.value }}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div>
+				<label
+					for="trabajo_institucional_sede"
+					class="form-label block font-medium mb-1">
+					Sede:
+				</label>
+				<select
+					name="trabajo_institucional_sede"
+					id="trabajo_institucional_sede"
+					class="form-input border rounded w-full p-2">
+					<option
+						value=""
+						disabled>
+						Seleccione una sede
+					</option>
+
+					{% for sede in sedes %}
+					<option value="{{ sede.name }}">{{ sede.name }}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<label class="form-label block font-medium mb-1"> Día/s: </label>
+
+			<div class="flex flex-col">
+				<div class="flex items-center mb-2">
+					<input
+						type="checkbox"
+						name="trabajo_institucional_dia[]"
+						id="Lunes"
+						value="Lunes"
+						class="form-checkbox" />
+					<label
+						for="Lunes"
+						class="ml-2"
+						>Lunes</label
+					>
+				</div>
+
+				<div class="flex items-center mb-2">
+					<input
+						type="checkbox"
+						name="trabajo_institucional_dia[]"
+						id="Martes"
+						value="Martes"
+						class="form-checkbox" />
+					<label
+						for="Martes"
+						class="ml-2"
+						>Martes</label
+					>
+				</div>
+
+				<div class="flex items-center mb-2">
+					<input
+						type="checkbox"
+						name="trabajo_institucional_dia[]"
+						id="Miércoles"
+						value="Miércoles"
+						class="form-checkbox" />
+					<label
+						for="Miércoles"
+						class="ml-2"
+						>Miércoles</label
+					>
+				</div>
+				<div class="flex items-center mb-2">
+					<input
+						type="checkbox"
+						name="trabajo_institucional_dia[]"
+						id="Jueves"
+						value="Jueves"
+						class="form-checkbox" />
+					<label
+						for="Jueves"
+						class="ml-2"
+						>Jueves</label
+					>
+				</div>
+				<div class="flex items-center mb-2">
+					<input
+						type="checkbox"
+						name="trabajo_institucional_dia[]"
+						id="Viernes"
+						value="Viernes"
+						class="form-checkbox" />
+					<label
+						for="Viernes"
+						class="ml-2"
+						>Viernes</label
+					>
+				</div>
+				<div>
+					<label
+						for="profesor_terapeuta_id"
+						class="form-label block font-medium mb-1">
+						Profesor/a o terapeuta:
+					</label>
+					<select
+						name="profesor_terapeuta_id"
+						id="profesor_terapeuta_id"
+						class="form-input border rounded w-full p-2">
+						<option
+							value=""
+							disabled>
+							Seleccione una persona
+						</option>
+
+						{% for profesor in profesores %}
+						<option value="{{ profesor.dni }}">
+							{{ profesor.nombre }} {{ profesor.apellido }}
+						</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div>
+					<label
+						for="conductor_caballo_id"
+						class="form-label block font-medium mb-1">
+						Conductor de caballo:
+					</label>
+					<select
+						name="conductor_caballo_id"
+						id="conductor_caballo_id"
+						class="form-input border rounded w-full p-2">
+						<option
+							value=""
+							disabled>
+							Seleccione una persona
+						</option>
+
+						{% for conductor in conductores %}
+						<option value="{{ conductor.dni }}">
+							{{ conductor.nombre }} {{ conductor.apellido }}
+						</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div>
+					<label
+						for="auxiliar_pista_id"
+						class="form-label block font-medium mb-1">
+						Auxiliar de pista:
+					</label>
+					<select
+						name="auxiliar_pista_id"
+						id="auxiliar_pista_id"
+						class="form-input border rounded w-full p-2">
+						<option
+							value=""
+							disabled>
+							Seleccione una persona
+						</option>
+
+						{% for auxiliar in auxiliares %}
+						<option value="{{ auxiliar.dni }}">
+							{{ auxiliar.nombre }} {{ auxiliar.apellido }}
+						</option>
+						{% endfor %}
+					</select>
+				</div>
+        <div>
+					<label
+						for="caballo_id"
+						class="form-label block font-medium mb-1">
+						Caballo:
+					</label>
+					<select
+						name="caballo_id"
+						id="caballo_id"
+						class="form-input border rounded w-full p-2">
+						<option
+							value=""
+							disabled>
+							Seleccione un caballo
+						</option>
+						{% for caballo in caballos %}
+						<option value="{{ caballo.id }}">
+							{{ caballo.nombre }} 
+						</option>
+						{% endfor %}
+					</select>
+				</div>
+			</div>
+		</div>
+
+		<!-- Parte 6: Datos adicionales -->
+		<div
+			id="contactData"
+			class="form-step"
+			style="display: none">
+			<h2 class="text-lg font-bold">Datos de Contacto</h2>
+			<div>
+				<label
+					for="becado"
+					class="form-label block font-medium mb-1"
+					>Está becado:</label
+				>
+				<select
+					name="becado"
+					id="becado"
+					class="form-input border rounded w-full p-2"
+					onchange="togglePorcentaje()">
+					<option value="false">No</option>
+					<option value="true">Sí</option>
+				</select>
+			</div>
+
+			<div
+				id="porcentaje_beca_container"
+				class="{% if becado %}block{% else %}hidden{% endif %}">
+				<label
+					for="porcentaje_beca"
+					class="form-label block font-medium mb-1"
+					>Porcentaje de la beca:</label
+				>
+				<input
+					type="number"
+					name="porcentaje_beca"
+					id="porcentaje_beca"
+          pattern="^[0-9]{1,3}$"  
+          min="0"    
+          max="100"  
+					class="form-input border rounded w-full p-2 [&::-webkit-inner-spin-button]:appearance-none" />
+			</div>
+
+			<div>
+				<label
+					for="recibe_asignacion"
+					class="form-label block font-medium mb-1"
+					>Percibe asignación familiar:</label
+				>
+				<select
+					name="recibe_asignacion"
+					id="recibe_asignacion"
+					class="form-input border rounded w-full p-2"
+					onchange="toggleAsignacion()">
+					<option value="false">No</option>
+					<option value="true">Sí</option>
+				</select>
+			</div>
+
+			<div
+				id="tipo_asignacion_container"
+				class="{% if recibe_asignacion %}block{% else %}hidden{% endif %} items-left mb-2 flex flex-col">
+				<label class="form-label block font-medium mb-1"
+					>Tipo de asignación:</label
+				>
+
+				<div class="flex items-center mb-2">
+					<input
+						type="checkbox"
+						name="tipo_asignacion[]"
+						id="tipo_asignacion_hijo"
+						value="Asignación universal por hijo"
+						class="form-checkbox" />
+					<label
+						for="tipo_asignacion_hijo"
+						class="ml-2"
+						>Asignación universal por hijo</label
+					>
+				</div>
+
+				<div class="flex items-center mb-2">
+					<input
+						type="checkbox"
+						name="tipo_asignacion[]"
+						id="tipo_asignacion_hijo_discapacidad"
+						value="Asignación universal por hijo con discapacidad"
+						class="form-checkbox" />
+					<label
+						for="tipo_asignacion_hijo_discapacidad"
+						class="ml-2"
+						>Asignación universal por hijo con discapacidad</label
+					>
+				</div>
+
+				<div class="flex items-center mb-2">
+					<input
+						type="checkbox"
+						name="tipo_asignacion[]"
+						id="tipo_asignacion_ayuda_escolar"
+						value="Asignación por ayuda escolar anual"
+						class="form-checkbox" />
+					<label
+						for="tipo_asignacion_ayuda_escolar"
+						class="ml-2"
+						>Asignación por ayuda escolar anual</label
+					>
+				</div>
+			</div>
+
+			<div>
+				<label
+					for="recibe_pension"
+					class="form-label block font-medium mb-1"
+					>Recibe pensión:</label
+				>
+				<select
+					name="recibe_pension"
+					id="recibe_pension"
+					class="form-input border rounded w-full p-2"
+					onchange="togglePension()">
+					<option value="false">No</option>
+					<option value="true">Sí</option>
+				</select>
+			</div>
+
+			<div
+				id="tipo_pension_container"
+				class="{% if recibe_pension %}block{% else %}hidden{% endif %}">
+				<label class="form-label block font-medium mb-1"
+					>Tipo de Pensión:</label
+				>
+				<select
+					name="tipo_pension"
+					id="tipo_pension"
+					class="form-input border rounded w-full p-2">
+					<option
+						value=""
+						disabled>
+						Seleccione un tipo de pensión
+					</option>
+					{% for pension in PensionType %}
+					<option value="{{ pension.name }}">{{ pension.value }}</option>
+					{% endfor %}
+				</select>
+			</div>
+
+			<div>
+				<label
+					for="profesionales"
+					class="form-label block font-medium mb-1"
+					>Profesionales que lo atienden:</label
+				>
+				<input
+					type="text"
+					name="profesionales"
+					id="profesionales"
+					class="form-input border rounded w-full p-2"
+					required />
+			</div>
+		</div>
+
+		<div
+			id="error-msg"
+			class="hidden text-red-500 mt-2"></div>
+		</div>
+    
+		<div
+			id="pageNumber"
+			class="flex justify-start pt-4"></div>
+		<div
+			id="btnContainer"
+			class="flex justify-end pt-4">
+			<button
+				id="btnAnterior"
+				type="button"
+				onclick="previousStep()"
+				class="relative text-blue-400 hover:border hover:rounded-lg hover:bg-gray-100 px-4 py-2 flex items-center transition duration-300 ease-in-out transform hover:scale-105 active:scale-95 hidden">
+				Anterior
+			</button>
+			<button
+				id="btnSiguiente"
+				type="button"
+				onclick="validateFormStep()"
+				class="relative text-white hover:text-white hover:bg-blue-500 flex items-center border border-blue-500 rounded-lg bg-blue-400 p-2 transition duration-300 ease-in-out shadow-md transform hover:scale-105 active:scale-95">
+				Siguiente
+			</button>
+			<button
+				id="btnGuardar"
+				type="submit"
+				class="relative text-white hover:text-white hover:bg-blue-500 flex items-center border border-blue-500 rounded-lg bg-blue-400 p-2 transition duration-300 ease-in-out shadow-md transform hover:scale-105 active:scale-95 hidden">
+				Guardar
+			</button>
+	</form>
+</div>
+
+<script>
+	let currentStep = 0;
+	const botonAnterior = document.getElementById('btnAnterior');
+	const container = document.getElementById('btnContainer');
+	const botonSiguiente = document.getElementById('btnSiguiente');
+	const botonGuardar = document.getElementById('btnGuardar');
+	const stepCounter = document.getElementById('pageNumber');
+
+	function showStep(step) {
+		const steps = document.querySelectorAll('.form-step');
+		steps.forEach((element, index) => {
+			element.style.display = index === step ? 'block' : 'none';
+		});
+		stepCounter.textContent = `${step + 1} / 6`;
+	}
+	function validateFormStep(event) {
+		const currentForm = document.querySelector(
+			'.form-step:not([style*="display: none"])'
+		);
+		const errorMsg = document.getElementById('error-msg');
+		let allFieldsValid = true;
+		const requiredInputs = currentForm.querySelectorAll('input[required]');
+
+		requiredInputs.forEach((input) => {
+			if (!input.reportValidity()) {
+				allFieldsValid = false;
+			}
+		});
+		if (currentStep == 0) {
+			let tipoDiagnostico = document.getElementById(
+				'diagnostico_discapacidad'
+			).value;
+			if (tipoDiagnostico === 'otro') {
+				let otroDiagnostico = document.getElementById('otro_diagnostico').value;
+				if (otroDiagnostico === '') {
+					showError('Debe especificar el diagnóstico');
+					allFieldsValid = false;
+				}
+			}
+			let checkboxes = document.querySelectorAll(
+				'input[type="checkbox"][name="tipo_discapacidad[]"]'
+			);
+			let checkedOne = Array.from(checkboxes).some((x) => x.checked);
+			if (!checkedOne) {
+				showError('Debe seleccionar al menos un tipo de discapacidad');
+				allFieldsValid = false;
+			}
+			let birthDate = document.getElementById('fecha_nacimiento').value;
+			if (new Date(birthDate) > new Date()) {
+				showError(
+					'La fecha de nacimiento no puede ser mayor a la fecha actual'
+				);
+				allFieldsValid = false;
+			}
+		}
+		if (currentStep == 4) {
+			let checkboxes = document.querySelectorAll(
+				'input[type="checkbox"][name="trabajo_institucional_dia[]"]'
+			);
+			let checkedOne = Array.from(checkboxes).some((x) => x.checked);
+			if (!checkedOne) {
+				showError('Debe seleccionar al menos un dia');
+				allFieldsValid = false;
+			}
+		}
+		if (currentStep == 5) {
+			if (document.getElementById('recibe_asignacion').value === 'true') {
+				let checkboxes = document.querySelectorAll(
+					'input[type="checkbox"][name="tipo_asignacion[]"]'
+				);
+				let checkedOne = Array.from(checkboxes).some((x) => x.checked);
+				if (!checkedOne) {
+					showError('Debe seleccionar al menos un tipo de asignación');
+					allFieldsValid = false;
+				}
+			} 
+			if (document.getElementById('becado').value === 'true') {
+				let porcentajeBeca = document.getElementById('porcentaje_beca').value;
+        console.log('porcentajeBeca', porcentajeBeca);
+				if (porcentajeBeca === ''|| porcentajeBeca < 0 || porcentajeBeca > 100) {
+					showError('Debe especificar el porcentaje de la beca');
+					allFieldsValid = false;
+				}
+			}
+      if (!allFieldsValid) {
+        event.preventDefault();
+      }
+		}
+
+		function showError(message) {
+			const errorMsg = document.getElementById('error-msg');
+			errorMsg.textContent = message;
+			errorMsg.classList.remove('hidden');
+		}
+
+		if (allFieldsValid && currentStep < 5) {
+			nextStep();
+			errorMsg.classList.add('hidden');
+		}
+	}
+
+	function nextStep() {
+		if (currentStep == 0) {
+			btnContainer.classList.remove('justify-end');
+			btnContainer.classList.add('justify-between');
+			botonAnterior.classList.remove('hidden');
+		}
+		if (currentStep == 4) {
+			botonSiguiente.classList.add('hidden');
+			botonGuardar.classList.remove('hidden');
+		}
+		currentStep++;
+		showStep(currentStep);
+	}
+
+	function previousStep() {
+		currentStep--;
+		botonSiguiente.classList.remove('hidden');
+		botonGuardar.classList.add('hidden');
+		if (currentStep == 0) {
+			botonAnterior.classList.add('hidden');
+			btnContainer.classList.remove('justify-between');
+			btnContainer.classList.add('justify-end');
+		}
+
+		showStep(currentStep);
+	}
+
+	window.onload = function () {
+		showStep(currentStep);
+	};
+	function toggleDiagnosis() {
+		const tieneCertificadoSelect = document.getElementById(
+			'certificado_discapacidad'
+		);
+		const diagnosticoContainer = document.getElementById(
+			'diagnostico_discapacidad_container'
+		);
+		const diagnosisSelect = document.getElementById('diagnostico_discapacidad');
+		const otherDiagnosis = document.getElementById('other_diagnosis');
+
+		if (tieneCertificadoSelect.value === 'true') {
+			diagnosticoContainer.classList.remove('hidden');
+			diagnosticoContainer.classList.add('block');
+		} else {
+			diagnosticoContainer.classList.remove('block');
+			diagnosticoContainer.classList.add('hidden');
+		}
+		toggleOtherDiagnosis();
+	}
+
+	function toggleOtherDiagnosis() {
+		const diagnosisSelect = document.getElementById('diagnostico_discapacidad');
+		const otherDiagnosisDiv = document.getElementById('other_diagnosis');
+
+		if (diagnosisSelect.value === 'otro') {
+			otherDiagnosisDiv.classList.remove('hidden');
+			otherDiagnosisDiv.classList.add('block');
+		} else {
+			otherDiagnosisDiv.classList.remove('block');
+			otherDiagnosisDiv.classList.add('hidden');
+		}
+	}
+	toggleDiagnosis();
+	function togglePorcentaje() {
+		const estaBecadoSelect = document.getElementById('becado');
+		const porcentajeContainer = document.getElementById(
+			'porcentaje_beca_container'
+		);
+
+		if (estaBecadoSelect.value === 'true') {
+			porcentajeContainer.classList.remove('hidden');
+			porcentajeContainer.classList.add('block');
+		} else {
+			porcentajeContainer.classList.remove('block');
+			porcentajeContainer.classList.add('hidden');
+		}
+	}
+	function toggleAsignacion() {
+		const recibeAsignacion = document.getElementById('recibe_asignacion');
+		const tipoAsignacionContainer = document.getElementById(
+			'tipo_asignacion_container'
+		);
+
+		if (recibeAsignacion.value === 'true') {
+			tipoAsignacionContainer.classList.remove('hidden');
+			tipoAsignacionContainer.classList.add('block');
+		} else {
+			tipoAsignacionContainer.classList.remove('block');
+			tipoAsignacionContainer.classList.add('hidden');
+		}
+	}
+	function togglePension() {
+		const recibePension = document.getElementById('recibe_pension');
+		const tipoPension = document.getElementById('tipo_pension_container');
+
+		if (recibePension.value === 'true') {
+			tipoPension.classList.remove('hidden');
+			tipoPension.classList.add('block');
+		} else {
+			tipoPension.classList.remove('block');
+			tipoPension.classList.add('hidden');
+		}
+	}
+</script>
+{% endblock %}

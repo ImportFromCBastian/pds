@@ -1,0 +1,83 @@
+{% extends "layout.html" %} {% block head %} {{ super() }} {% endblock %} {%
+block title %} Ver contenido {% endblock %} {% block content %}
+<div class="flex justify-between">
+	<a
+		class="flex w-fit rounded-md relative pb-2"
+		href="{{ url_for('content.index') }}"
+		alt="volver al listado">
+		<span class="material-symbols-outlined"> arrow_back </span>
+		<span class="material-symbols-outlined"> List_alt </span>
+	</a>
+	{% if is_system_admin(session) or check_permission(session,
+	"content_update")%}
+	<a
+		href="{{ url_for('content.edit', id=content.id) }}"
+		class="hover:text-red-500 text-gray-500 flex items-center">
+		<span class="material-symbols-outlined">edit</span>
+	</a>
+	{% endif %}
+</div>
+<div
+	class="w-full max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md relative flex flex-col space-y-4 sm:min-w-[20px] md:min-w-[600px] lg:min-w-[1000px]">
+	<div class="mt-2 justify-between flex">
+		<span
+			class="text-xs font-semibold px-2 py-1 rounded bg-opacity-70 {% if content.estado.value == 'Borrador' %} bg-yellow-200 text-orange-700{% elif content.estado.value == 'Publicado' %} bg-green-200 text-emerald-700{% elif content.estado.value == 'Archivado' %} bg-red-200 text-rose-700{% else %} bg-gray-300 text-gray-800 {% endif %}">
+			{{ content.estado.value }}
+		</span>
+		<p class="text-gray-500 text-sm align-middle flex items-center space-x-2">
+			<span class="material-symbols-outlined text-sm"> calendar_today </span>
+			<span>
+				{% if content.fecha_publicacion %} {{
+				content.fecha_publicacion.strftime('%d de %B de %Y, %H:%M') }} {% else
+				%} Aún no publicado {% endif %}
+			</span>
+		</p>
+	</div>
+
+	<h1 class="text-3xl font-bold text-gray-800 break-words">
+		{{ content.titulo }}
+	</h1>
+	<h2 class="text-lg font-thin text-gray-800 break-words">
+		{{ content.copete }}
+	</h2>
+	<div class="mt-4 text-gray-700 break-words">{{ content.contenido }}</div>
+
+	<div class="border-t border-gray-300 pt-4">
+		<div class="flex items-center justify-between text-sm text-gray-500">
+			<span class="flex items-center">
+				<span class="material-symbols-outlined text-sm mr-2">Person</span>
+				{{ content.autor.alias }}
+			</span>
+			<span class="flex items-center space-x-2">
+				<span class="flex items-center">
+					<span class="material-symbols-outlined text-sm mr-2"
+						>Calendar_today</span
+					>
+					Creado: {{ content.inserted_at.strftime('%d de %B de %Y') }}
+				</span>
+				<span class="flex items-center">
+					<span class="material-symbols-outlined text-sm mr-2"
+						>Calendar_today</span
+					>
+					Actualizado: {% if content.updated_at %} {{
+					content.updated_at.strftime('%d de %B de %Y') }} {% else %} - {% endif
+					%}
+				</span>
+			</span>
+		</div>
+	</div>
+</div>
+{% if is_system_admin(session) or check_permission(session, "content_destroy")%}
+<form
+	action="{{ url_for('content.deleteContent', id=content.id) }}"
+	method="POST"
+	class="inline"
+	onsubmit="return confirm('¿Estás seguro de que quieres eliminar este contenido?');">
+	<button
+		type="submit"
+		class="flex items-center text-white hover:bg-red-500 bg-red-600 p-2 mt-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 active:scale-95">
+		<span class="material-symbols-outlined mr-2">delete</span>
+		Eliminar contenido
+	</button>
+</form>
+{% endif %} {%endblock %}

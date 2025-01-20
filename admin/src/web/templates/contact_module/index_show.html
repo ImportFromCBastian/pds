@@ -1,0 +1,65 @@
+{% extends "layout.html" %} {% block title %} Ver Consulta {% endblock %} {%
+    block head %} {{ super() }} {% endblock %} {% block content %}
+    <div class="w-full max-w-6xl mx-auto">
+        {% if errors %} {% for error in errors %}
+        <div
+            class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+            role="alert">
+            <strong class="font-bold">Error!</strong>
+            <span class="block sm:inline">{{ error }}</span>
+        </div>
+        {% endfor %} {% endif %}
+        <a
+            class="flex rounded-md relative w-fit"
+            href="{{url_for('modulo_contacto.listado')}}"
+            alt="Volver al Listado de Consultas">
+            <span class="material-symbols-outlined"> arrow_back </span>
+            <span class="material-symbols-rounded"> groups </span>
+        </a>
+        <h1
+            class="flex justify-center items-center text-center text-2xl font-bold my-4">
+            Visualizando Consulta"
+        </h1>
+        <div
+            class="w-full max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md relative flex flex-col justify-between">
+            <div class="flex flex-col space-y-6 my-1">
+
+                <div class="min-w-[120px] w-full sm:w-auto">
+                    <p><strong>Titulo:</strong> {{ query.titulo }}</p>
+                </div>
+
+                <div class="min-w-[120px] w-full sm:w-auto">
+                    <p><strong>Descripcion:</strong> {{ query.descripcion }}</p>
+                </div>
+
+                <div class="min-w-[120px] w-full sm:w-auto">
+                    <p><strong>Remitente:</strong> {{ query.email }}</p>
+                </div>
+    
+                <div class="min-w-[120px] w-full sm:w-auto">
+                    <p><strong>Estado de la Consulta:</strong> {{query.estado.value}}</p>
+                </div>
+    
+                {% if query.comentario %}
+                <div class="min-w-[120px] w-full sm:w-auto">
+                    <p><strong>Comentario:</strong> {{query.comentario}}</p>
+                </div>
+                {% endif %}
+    
+                <div class="min-w-[120px] w-full sm:w-auto">
+                    <p>
+                        <strong>Fecha de Creacion:</strong>
+                        {{query.created_at.strftime("%d/%m/%Y")}}
+                    </p>
+                </div>
+                
+                <div class="min-w-[120px] w-full sm:w-auto">
+                    <p>
+                        <strong>Última Fecha de Modificación:</strong>
+                        {{query.closed_at.strftime("%d/%m/%Y")}}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}

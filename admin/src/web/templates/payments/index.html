@@ -1,0 +1,206 @@
+{% extends "layout.html" %} 
+
+{% block title %}Pagos{% endblock %}
+
+{% block head%}
+  {{super()}}
+{% endblock %} 
+
+{% block content%}
+<h1
+  class="flex justify-center items-center text-center text-2xl font-bold my-4">
+  Listado de pagos
+</h1>
+<div class="w-full max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md ">
+  {% if success%}
+    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+      <strong class="font-bold">Éxito!</strong>
+      <span class="block sm:inline">{{ success }}</span>
+    </div>
+  {% endif %}
+  <a class="hover:text-green-500" href="{{url_for('payments.new')}}">
+    <span class="material-symbols-outlined">
+      add_circle
+    </span>
+    </a>
+  <form class="space-y-6 my-6">
+    <div class="flex flex-wrap gap-4 items-end">
+      <div class="flex-1 min-w-[120px] w-full sm:w-auto">
+        <label for="beneficiario" class="mb-2 block form-label">DNI del beneficiario</label>
+        <input
+          type="number"
+          id="beneficiario"
+          name="beneficiario"
+          class="w-full border border-gray-300 form-input p-1 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          placeholder="{{ args['beneficiario'] if args.get('beneficiario') else '' }}"
+          value="{{ args['beneficiario'] if args.get('beneficiario') else '' }}"
+        />
+      </div>
+
+      <div class="flex-1 min-w-[120px] w-full sm:w-auto">
+        <label for="fecha_pago_desde" class="mb-2 block form-label">Fecha desde</label>
+        <input
+          type="date"
+          id="fecha_pago_desde"
+          name="fecha_pago_desde"
+          class="w-full border border-gray-300 form-input p-1"
+          placeholder="{{ args['fecha_pago_desde'] if args.get('fecha_pago_desde') else '' }}"
+          value="{{ args['fecha_pago_desde'] if args.get('fecha_pago_desde') else '' }}"
+        />
+      </div>
+
+      <div class="flex-1 min-w-[120px] w-full sm:w-auto">
+        <label for="fecha_pago_hasta" class="mb-2 block form-label">Fecha hasta</label>
+        <input
+          type="date"
+          id="fecha_pago_hasta"
+          name="fecha_pago_hasta"
+          class="w-full border border-gray-300 form-input p-1"
+          placeholder="{{ args['fecha_pago_hasta'] if args.get('fecha_pago_hasta') else '' }}"
+          value="{{ args['fecha_pago_hasta'] if args.get('fecha_pago_hasta') else '' }}"
+        />
+      </div>
+
+      <div class="flex-1 min-w-[120px] w-full sm:w-auto">
+        <label for="sort_order" class="mb-2 block form-label">Ordenar por fecha</label>
+        <select id="sort_order" name="sort_order" class="w-full border border-gray-300 form-input p-1">
+          <option value="">Elige una opción...</option>
+          <option value="asc" {% if args.get('sort_order') == 'asc' %} selected {% endif %}>Ascendente</option>
+          <option value="desc" {% if args.get('sort_order') == 'desc' %} selected {% endif %}>Descendente</option>
+        </select>
+      </div>
+
+      <div class="flex-1 min-w-[120px] w-full sm:w-auto">
+        <label for="tipo_pago" class="mb-2 block form-label">Tipo de pago</label>
+        <select id="tipo_pago" name="tipo_pago" class="w-full border border-gray-300 form-input p-1">
+          <option value="">Elige una opción...</option>
+          {% for type in payment_type %}
+            <option value="{{ type.name }}" 
+                    {% if args.get('tipo_pago') == type.name %} selected {% endif %}>
+              {{ type.value }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="flex-1 min-w-[120px] w-full sm:w-auto">
+        <label for="per_page" class="form-label mb-2 block">Resultados por página</label>
+        <select id="per_page" name="per_page" class="form-input border border-gray-300 rounded p-1">
+          <option value="5" {% if args.get('per_page') is not defined or args.get('per_page') == 5 %} selected {% endif %}>5</option>
+          <option value="10" {% if args.get('per_page') == 10 %} selected {% endif %}>10</option>
+          <option value="20" {% if args.get('per_page') == 20 %} selected {% endif %}>20</option>
+          <option value="50" {% if args.get('per_page') == 50 %} selected {% endif %}>50</option>
+      </select>
+    </div>
+
+      <div>
+        <button type="submit" class="bg-primary text-primary-foreground h-10 px-4 py-2 rounded">
+          <span class="material-symbols-rounded">
+            search
+          </span>
+        </button>
+        <a href="{{url_for('payments.index')}}" class="bg-primary text-primary-foreground h-10 px-4 py-2 rounded">
+          <span class="material-symbols-outlined">
+            mop
+          </span>
+        </a>
+      </div>
+    </div>
+</form>
+
+  
+  <div class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow-md">
+    <div class="max-w-full sm:max-w-6xl mx-auto">
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-4 p-4 bg-gray-50 font-medium text-xs uppercase text-gray-500 tracking-wider">
+              <div class="block">DNI del beneficiario</div>
+              <div class="block lg:hidden">Info del pago</div>
+              <div class="hidden lg:block">Nombre del beneficiario</div>
+              <div class="hidden sm:block">Apellido del beneficiario</div>
+              <div class="hidden md:block">Fecha del pago</div>
+              <div class="hidden md:block">Tipo de pago</div>
+              <div class="hidden lg:block">Monto($)</div>
+              <div class="hidden lg:block">Descripcion</div>
+              <div class="hidden sm:block">Acci&oacute;n</div>
+            </div>
+            <div class="divide-y divide-gray-200">
+              {% if not empty%}
+                {% for payment in payments %}
+                  <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-4 p-4 items-center hover:bg-gray-50">
+                      <div class="text-sm font-medium text-gray-900">{{ payment.employee.dni }}</div>
+                      <div class="text-sm text-gray-500">
+                        <div>{{payment.employee.nombre}}</div>
+                        <div class="block sm:hidden text-gray-500 text-xs">{{ payment.employee.apellido }}</div>
+                        <div class="md:hidden text-xs text-gray-400">{{ style_date(payment.fecha_pago) }}</div>
+                        <div class="md:hidden text-xs text-gray-400">{{ payment.tipo_pago.value }}</div>
+                        <div class="lg:hidden text-xs text-gray-400">$ {{ payment.monto }}</div>
+                        <div class="lg:hidden text-xs text-gray-400 truncate">{% if payment.descripcion %} {{payment.descripcion}} {% else %} ----- {% endif %}</div>
+                      </div>
+                      <div class="hidden sm:block text-gray-500">{{ payment.employee.apellido }}</div>
+                      <div class="hidden md:block text-sm text-gray-500 w-fit">{{ style_date(payment.fecha_pago) }}</div>
+                      <div class="hidden md:block text-sm text-gray-500">{{ payment.tipo_pago.value }}</div>
+                      <div class="hidden lg:block text-sm text-gray-500">$ {{ payment.monto }}</div>
+                      <div class="hidden lg:block text-sm text-gray-500 w-fit truncate">{% if payment.descripcion %} {{payment.descripcion}} {% else %} ----- {% endif %}</div>
+                      <a href="{{ url_for('payments.edit',id=payment.id) }}">
+                        <span class="material-symbols-outlined hover:text-red-500">
+                          edit
+                        </span>
+                      </a>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <div class="p-4 text-center text-gray-500">No hay pagos registrados bajo ese criterio</div>
+              {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="flex justify-between items-center my-6">
+  <div>
+    Mostrando {{ pagination.item }} de {{ pagination.total_items }} resultados
+  </div>
+  <div class="flex space-x-2">
+    {% if pagination.has_prev %}
+      <a href="{{ url_for('payments.index', page=pagination.prev_num, per_page=per_page) }}" class="px-4 py-2 bg-blue-500 text-white rounded">Anterior</a>
+    {% endif %}
+    <div class="flex gap-2">
+      {% for page in range(1, pagination.total_pages + 1) %}
+        {% if page == pagination.pages %}
+          <span class="px-4 py-2 bg-gray-300 rounded">{{ page }}</span>
+        {% else %}
+          <a href="{{ url_for('payments.index', page=page, per_page=per_page) }}" class="px-4 py-2 bg-blue-500 text-white rounded">{{ page }}</a>
+        {% endif %}
+      {% endfor %}
+    </div>
+    {% if pagination.has_next %}
+      <a href="{{ url_for('payments.index', page=pagination.next_num, per_page=per_page) }}" class="px-4 py-2 bg-blue-500 text-white rounded">Siguiente</a>
+    {% endif %}
+    </div>
+  </div>
+  <a class="flex w-fit rounded-md p-2 relative" href="{{url_for('payments.index')}}" alt="volver a equipo">
+    <span class="material-symbols-outlined">
+      arrow_back
+    </span>
+    <span class="material-symbols-rounded">
+      groups
+    </span>
+  </a>
+</div>
+<script >
+  const startDateInput = document.getElementById('fecha_pago_desde');
+  const endDateInput = document.getElementById('fecha_pago_hasta');
+
+  startDateInput.addEventListener('change', function() {
+    const startDate = new Date(startDateInput.value);
+    
+    // Añadimos un día a la fecha seleccionada
+    const nextDay = new Date(startDate);
+    nextDay.setDate(nextDay.getDate() + 1);
+    
+    const formattedDate = nextDay.toISOString().split('T')[0];
+    
+    // Establecemos la fecha mínima para el segundo input
+    endDateInput.min = formattedDate;
+  });
+</script>
+{% endblock %}

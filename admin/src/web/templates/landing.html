@@ -1,0 +1,70 @@
+{% extends "layout.html"%}
+{% block title %} Inicio {% endblock %}
+{% block head%}
+  {{super()}} 
+{% endblock %} 
+{% block content%}
+  {% if not system_admin %}
+    <div class="flex flex-col min-h-screen p-6 bg-white rounded-lg shadow-md">
+      <main class="flex-1">
+        <section class="w-full py-8">
+          <div class="container px-4 md:px-6">
+            <div class="flex flex-col items-center space-y-4 text-center">
+              <div class="space-y-2">
+                <h1
+                  class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
+                  Acciones que puedes realizar
+                </h1>
+                <p
+                  class="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
+                  Descubre todas las posibilidades que tu rol de {{ role }} es capaz
+                  de hacer en este portal. Aquí tienes una lista de acciones que
+                  puedes llevar a cabo con nuestra plataforma de administracion.
+                </p>
+              </div>
+            </div>
+            <div
+              class="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-2 lg:gap-10">
+              {% for permission in permissions %}
+              <div
+                class="rounded-lg border bg-card text-card-foreground shadow-sm transition-transform duration-300 ease-in-out hover:scale-105">
+                <div class="flex items-center space-x-4 p-4">
+                  <span class="material-symbols-outlined"
+                    >{{ permission.icon }}</span
+                  >
+                  <div>
+                    <h3 class="text-xl font-bold">
+                      {{ permission.action }} - {{ permission.name }}
+                    </h3>
+                    <p class="text-gray-500 dark:text-gray-400">
+                      {{ permission.message }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  {% else %}
+    <section class="w-fit py-8 bg-white">
+      <div class="container px-4 md:px-6">
+        <div class="flex flex-col items-center space-y-4 text-center">
+          <div class="space-y-2">
+            <h1
+              class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
+              Acciones que puedes realizar
+            </h1>
+            <p
+              class="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
+              ¡Eres el system admin!, el designado administrador del sistema de
+              gestion del grupo CEDICA, eres libre de hacer lo que quieras.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  {% endif %}
+{% endblock %}

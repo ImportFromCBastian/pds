@@ -1,0 +1,162 @@
+{% extends "layout.html" %} {% block title %}Editar Jinete/Amazona{% endblock %}
+{% block content %}
+
+<h1 class="text-center text-2xl font-bold mb-5">
+	Cargando familiar a "{{rider.nombre}} {{rider.apellido}} "
+</h1>
+<div class="w-full max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md">
+	<form
+		class="flex flex-col space-y-3"
+		method="post"
+		action="{{ url_for('riders.createNewFamilyMember', dni=rider.dni) }}">
+		<div>
+			<label
+				for="parentesco"
+				class="form-label block font-medium mb-1">
+				Parentesco:
+			</label>
+			<input
+				type="text"
+				name="parentesco"
+				id="parentesco"
+				class="form-input border rounded w-full p-2"
+				required />
+		</div>
+		<div>
+			<label
+				for="nombre"
+				class="form-label block font-medium mb-1">
+				Nombre:
+			</label>
+			<input
+				type="text"
+				name="nombre"
+				id="nombre"
+				pattern="^[A-Za-zÀ-ÿ\s]+$"
+				title="Por favor, ingrese un nombre válido"
+				class="form-input border rounded w-full p-2"
+				required />
+		</div>
+		<div>
+			<label
+				for="apellido"
+				class="form-label block font-medium mb-1">
+				Apellido:
+			</label>
+			<input
+				type="text"
+				name="apellido"
+				id="apellido"
+				pattern="^[A-Za-zÀ-ÿ\s]+$"
+				title="Por favor, ingrese un nombre válido"
+				class="form-input border rounded w-full p-2"
+				required />
+		</div>
+		<div>
+			<label
+				for="dni"
+				class="form-label block font-medium mb-1">
+				DNI:
+			</label>
+			<input
+				type="tel"
+				name="dni"
+				id="dni"
+				pattern="[0-9]{7,8}"
+				maxlength="8"
+				title="Por favor, ingrese un DNI válido"
+				class="form-input border rounded w-full p-2 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+				required />
+		</div>
+
+		<div>
+			<label
+				for="email"
+				class="form-label block font-medium mb-1">
+				Email:
+			</label>
+			<input
+				type="email"
+				name="email"
+				id="email"
+				class="form-input border rounded w-full p-2"
+				required />
+		</div>
+		<div>
+			<label
+				for="domicilio_actual"
+				class="form-label block font-medium mb-1">
+				Domicilio:
+			</label>
+			<input
+				type="text"
+				name="domicilio_actual"
+				id="domicilio_actual"
+				class="form-input border rounded w-full p-2"
+				required />
+		</div>
+		<div>
+			<label
+				for="celular_actual"
+				class="form-label block font-medium mb-1">
+				Celular:
+			</label>
+			<input
+				type="tel"
+				name="celular_actual"
+				id="celular_actual"
+				pattern="^\d{1,10}$"
+				title="Por favor, ingrese un teléfono válido"
+				maxlength="10"
+				class="form-input border rounded w-full p-2 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+				required />
+		</div>
+		<label
+			for="nivel_escolaridad"
+			class="form-label block font-medium mb-1">
+			Nivel de escolaridad:
+		</label>
+		<select
+			name="nivel_escolaridad"
+			id="nivel_escolaridad"
+			class="form-input border rounded w-full p-2">
+			<option
+				value=""
+				disabled>
+				Seleccione una opción
+			</option>
+
+			{% for nivel in nivel_escolaridad %}
+			<option value="{{ nivel.name }}">{{ nivel.value }}</option>
+			{% endfor %}
+		</select>
+		<div>
+			<label
+				for="actividad_ocupacion"
+				class="form-label block font-medium mb-1">
+				Profesión:
+			</label>
+			<input
+				type="text"
+				name="actividad_ocupacion"
+				id="actividad_ocupacion"
+				class="form-input border rounded w-full p-2"
+				required />
+		</div>
+		<div class="flex justify-end pt-4">
+			<a
+				href="{{url_for('riders.info', dni=rider.dni)}}"
+				class="relative text-blue-400 hover:border hover:rounded-lg hover:bg-gray-100 px-4 py-2 mx-5 flex items-center transition duration-300 ease-in-out transform hover:scale-105 active:scale-95">
+				Cancelar
+			</a>
+			<button
+				type="submit"
+				class="relative text-white hover:text-white hover:bg-blue-500 flex items-center border border-blue-500 rounded-lg bg-blue-400 p-2 transition duration-300 ease-in-out shadow-md transform hover:scale-105 active:scale-95">
+				<span class="material-symbols-rounded">save</span>
+				Agregar
+			</button>
+		</div>
+	</form>
+</div>
+
+{% endblock %}

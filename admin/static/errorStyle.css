@@ -1,0 +1,153 @@
+body {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: fit-content;
+	width: auto;
+	margin-top: 10%;
+	background-color: #f5f5f5;
+	font-family: Arial, sans-serif;
+}
+
+/* Contenedor del mensaje de error */
+.error-container {
+	min-height: auto;
+	text-align: center;
+	background-color: white;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	position: relative;
+	max-width: 90%;
+}
+
+/* Estilo para el texto de error */
+h1 {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 9rem;
+	margin-bottom: 10px;
+	position: relative;
+}
+
+/* Estilo para los números del texto de error */
+h1 .first-num {
+	position: relative;
+	z-index: 1;
+	left: 4%;
+}
+
+h1 .second-num {
+	position: relative;
+	display: inline-block;
+	right: 5%;
+	z-index: 1;
+}
+
+/* Estilo para el emoji */
+h1 img {
+	z-index: 2;
+	width: auto;
+	height: 100%;
+	max-height: 150px;
+}
+
+/* Centrado del contenedor de números y emoji */
+.error-container h1 span {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* Estilo para el mensaje de error */
+.error-message {
+	font-size: 2rem;
+	color: #d9534f;
+	margin: 10px 0;
+}
+
+/* Estilo para los detalles del error */
+.error-details {
+	font-size: 1.2rem;
+	color: #666;
+	margin-bottom: 20px;
+}
+
+/* Estilo para el botón de error */
+.error-button {
+	display: inline-block;
+	padding: 10px 20px;
+	font-size: 1rem;
+	color: white;
+	background-color: #e9cd30;
+	text-decoration: none;
+	border-radius: 5px;
+	transition: background-color 0.3s;
+}
+
+.error-button:hover {
+	background-color: #eaec51;
+}
+.error-emoji-side {
+	position: relative;
+	max-width: 150px;
+	margin-top: 20%;
+}
+
+/* Media queries para pantallas móviles */
+@media (max-width: 768px) {
+	body {
+		margin-top: 50%;
+	}
+	.error-container {
+		padding: 15px;
+	}
+	h1 {
+		font-size: 8rem; 
+	}
+	h1 img {
+		max-height: 100px; 
+	}
+	.error-message {
+		font-size: 1.5rem; 
+	}
+	.error-details {
+		font-size: 1rem; 
+	}
+	.error-button {
+		padding: 8px 16px;
+		font-size: 0.9rem;
+	}
+	.error-emoji-side {
+		max-width: 120px;
+		position: relative;
+	}
+}
+
+@media (max-width: 480px) {
+	body {
+		margin-top: 50%;
+	}
+	h1 {
+		font-size: 6rem; 
+	}
+	h1 img {
+		max-height: 80px; 
+	}
+	.error-message {
+		font-size: 1.2rem; 
+	}
+	.error-details {
+		font-size: 0.9rem;
+	}
+	.error-button {
+		padding: 6px 12px;
+		font-size: 0.8rem;
+	}
+	.error-emoji-side {
+		max-width: 120px;
+		margin-top: 10%;
+		position: relative;
+	}
+}

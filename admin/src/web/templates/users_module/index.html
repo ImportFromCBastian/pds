@@ -1,0 +1,274 @@
+{% extends "layout.html"%} {% block title %} Listado de Usuarios {% endblock %}
+{% block head%} {{ super() }} {% endblock %} {% block content%}
+<h1
+	class="flex justify-center items-center text-center text-2xl font-bold my-4">
+	Listado de usuarios del sistema
+</h1>
+
+<div
+	class="w-full max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md relative flex flex-col justify-between">
+	{% if is_system_admin(session) or check_permission(session, "user_new") %}
+	<div>
+		<a
+			class="material-symbols-outlined hover:text-green-500"
+			href="{{url_for('modulo_usuarios.crear_usuario')}}">
+			<span class="material-symbols-outlined"> add_circle </span>
+		</a>
+	</div>
+	{% endif %}
+	<form
+		action="{{ url_for('modulo_usuarios.listado',page_receive=0) }}"
+		method="GET"
+		class="flex flex-wrap gap-4 items-end">
+		<!-- Correo electrónico -->
+		<div class="flex-1 min-w-[120px] w-full sm:w-auto">
+			<label
+				for="email"
+				class="form-label mb-2 block">
+				Correo electrónico
+			</label>
+			<input
+				type="search"
+				placeholder="ejemplo@gmail.com"
+				class="w-full border border-gray-300 form-input p-2"
+				name="email"
+				id="email" />
+		</div>
+
+		<!-- Rol por el cual filtrar -->
+		<div class="flex-1 min-w-[120px] w-full sm:w-auto">
+			<label
+				class="form-label mb-2 block"
+				for="role">
+				Rol por el cual filtrar
+			</label>
+			<select
+				class="w-full border border-gray-300 form-input p-2"
+				name="role"
+				id="role">
+				<option
+					value=""
+					disabled
+					selected>
+					Selecciona un Rol
+				</option>
+				{% for role in roles %}
+				<option value="{{ role.id }}">{{ role.nombre }}</option>
+				{% endfor %}
+			</select>
+		</div>
+
+		<!-- Estado por el cual filtrar -->
+		<div class="flex-1 min-w-[120px] w-full sm:w-auto">
+			<label
+				class="form-label mb-2 block"
+				for="status">
+				Estado por el cual filtrar
+			</label>
+			<select
+				class="w-full border border-gray-300 form-input p-2"
+				name="bloqueado"
+				id="status">
+				<option
+					value=""
+					disabled
+					selected>
+					Selecciona un Estado
+				</option>
+				<option value="True">Inactivo</option>
+				<option value="False">Activo</option>
+			</select>
+		</div>
+
+		<!-- Valor por el cual ordenar -->
+		<div class="flex-1 min-w-[120px] w-full sm:w-auto">
+			<label
+				class="form-label mb-2 block"
+				for="sort_column">
+				Valor por el cual ordenar
+			</label>
+			<select
+				class="w-full border border-gray-300 form-input p-2"
+				name="sort_column"
+				id="sort_column">
+				<option value="creado_en">Fecha Creación</option>
+				<option value="email">Email</option>
+			</select>
+		</div>
+
+		<!-- Tipo de orden -->
+		<div class="flex-1 min-w-[120px] w-full sm:w-auto">
+			<label
+				class="form-label mb-2 block"
+				for="sort_order">
+				Tipo de orden
+			</label>
+			<select
+				class="w-full border border-gray-300 form-input p-2"
+				name="sort_order"
+				id="sort_order">
+				<option value="desc">Descendente</option>
+				<option value="asc">Ascendente</option>
+			</select>
+		</div>
+
+		<div class="flex-1 min-w-[120px] w-full sm:w-auto">
+			<label for="per_page" class="form-label mb-2 block">Resultados por página</label>
+			<select id="per_page" name="per_page" class="form-input border border-gray-300 rounded p-1">
+				<option value="5" {% if per_page is not defined or per_page == 5 %} selected {% endif %}>5</option>
+				<option value="10" {% if per_page == 10 %} selected {% endif %}>10</option>
+				<option value="20" {% if per_page == 20 %} selected {% endif %}>20</option>
+				<option value="50" {% if per_page == 50 %} selected {% endif %}>50</option>
+			</select>
+  
+		</div>
+
+		<!-- Contenedor centrado para los botones -->
+		<div class="flex-item-center float-right">
+			<!-- Botón de búsqueda -->
+			<button
+				type="submit"
+				class="bg-primary text-primary-foreground h-10 px-4 py-2 rounded">
+				<span class="material-symbols-outlined"> search </span>
+			</button>
+			<!-- Limpiar filtros -->
+			<a
+				href="{{ url_for('modulo_usuarios.listado')}}"
+				class="bg-primary text-primary-foreground h-10 px-4 py-2 rounded">
+				<span class="material-symbols-outlined"> mop </span>
+			</a>
+		</div>
+	</form>
+
+	<div class="bg-white shadow-md rounded-lg overflow-hidden mt-5">
+		<div class="overflow-x-auto bg-gray-100 p-4 sm:p-6">
+			<div class="bg-white shadow-md rounded-lg overflow-hidden">
+				<div
+					class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4 p-4 bg-gray-50 font-medium text-xs uppercase text-gray-500 tracking-wider">
+					<div>Email</div>
+					<div class="block sm:hidden">Info</div>
+					<div class="hidden sm:block">Alias</div>
+					<div class="hidden sm:block">Estado</div>
+					<div class="hidden md:block">Rol</div>
+				</div>
+				<div class="divide-y divide-gray-200">
+					{% if users %} {% for user in users %}
+					<div
+						class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4 p-4 items-center hover:bg-gray-50">
+						<a
+							class="text-sm font-medium text-gray-900 truncate"
+							href="{{ url_for('modulo_usuarios.mostrar_usuario', email=user.email) }}">
+							{{ user.email }}
+						</a>
+						<!-- Pantallas chicas: Info -->
+						<div class="text-sm text-gray-500 block sm:hidden">
+							<div>{{ user.alias }}</div>
+							<div class="text-xs text-gray-400">
+								{% if user.bloqueado %} Inactivo {% else %} Activo {% endif %}
+							</div>
+							<div class="text-xs text-gray-400">{{ user.rol.nombre }}</div>
+						</div>
+						<!-- Pantallas grandes: Alias, Estado, Rol, Acciones -->
+						<div class="hidden sm:block text-sm text-gray-500">
+							{{ user.alias }}
+						</div>
+						<div class="hidden sm:block text-sm text-gray-500">
+							{% if user.bloqueado %} Inactivo {% else %} Activo {% endif %}
+						</div>
+						<div class="hidden md:block text-sm text-gray-500">
+							{{ user.rol.nombre }}
+						</div>
+
+						<div class="flex items-center sm:flex">
+							{% if not user.system_admin %} {% if is_system_admin(session) or
+							check_permission(session, "user_update") or user.email ==
+							session.get("user") %}
+							<a
+								href="{{ url_for('modulo_usuarios.actualizar_usuario', email=user.email) }}"
+								class="text-gray-500 flex items-center">
+								<span
+									class="mb-1 mx-2 material-symbols-outlined hover:text-red-500">
+									edit
+								</span>
+							</a>
+							{% endif %} {% endif %} {% if is_system_admin(session) and not
+							user.system_admin %}
+							<form
+								action="{{ url_for('modulo_usuarios.eliminar_usuario', email=user.email) }}">
+								<button
+									type="submit"
+									onclick="return confirmDelete()">
+									<span
+										class="mx-2 material-symbols-outlined hover:text-red-500">
+										delete
+									</span>
+								</button>
+							</form>
+							<script>
+								function confirmDelete() {
+									return confirm(
+										'¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.'
+									);
+								}
+							</script>
+							{% if user.bloqueado %}
+							<a
+								href="{{ url_for('modulo_usuarios.cambiar_estado_usuario', email=user.email) }}">
+								<span class="text-green-400"> Activar </span>
+							</a>
+							{% else %}
+							<a
+								href="{{ url_for('modulo_usuarios.cambiar_estado_usuario', email=user.email) }}">
+								<span class="text-red-400"> Desactivar </span>
+							</a>
+							{% endif %} {% elif user.system_admin %}
+							<span class="text-sm text-red-500 font-medium">
+								System Admin
+							</span>
+							{% endif %}
+						</div>
+					</div>
+					{% endfor %} {% else %}
+					<div class="p-4 text-center text-gray-500">
+						No se encontraron Usuarios bajo estos criterios
+					</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="flex justify-between items-center my-6">
+		<div>
+            Mostrando {{ users.items | length }} de {{ users.total }} resultados
+        </div>
+
+		<div class="flex space-x-2">
+			{% if users.has_prev %}
+                <a 
+					href="{{ url_for('modulo_usuarios.listado', page_receive=users.prev_num, sort_column=current_sort_column, sort_order=current_sort_order, email=request.args.get('email'), role=request.args.get('role'), bloqueado=request.args.get('bloqueado')) }}"
+					class="bg-primary text-primary-foreground h-10 px-4 py-2 rounded">
+                    Anterior
+                </a>
+            {% endif %}
+			{% for page in range(1, users.pages + 1) %}
+				{% if page == users.page %}
+					<span class="h-10 px-4 py-2 rounded bg-gray-300">{{ page }}</span>
+				{% else %}
+					<a
+						href="{{ url_for('modulo_usuarios.listado', page_receive=page, sort_column=current_sort_column, sort_order=current_sort_order, email=request.args.get('email'), role=request.args.get('role'), bloqueado=request.args.get('bloqueado')) }}"
+						class="bg-primary text-primary-foreground h-10 px-4 py-2 rounded">
+						{{ page }}
+					</a>
+				{% endif %}
+			{% endfor %}
+			{% if users.has_next %}
+				<a 
+					href="{{ url_for('modulo_usuarios.listado', page_receive=users.next_num, sort_column=current_sort_column, sort_order=current_sort_order, email=request.args.get('email'), role=request.args.get('role'), bloqueado=request.args.get('bloqueado')) }}"
+					class="bg-primary text-primary-foreground h-10 px-4 py-2 rounded">
+                    Siguiente
+                </a>
+            {% endif %}
+		</div>
+	</div>
+</div>
+{% endblock %}

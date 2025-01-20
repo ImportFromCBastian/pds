@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+{% block title %}Editar Usuario{% endblock %}
+{% block head %}
+{{ super() }} 
+{% endblock %} 
+{% block content %}
+
+<div class="w-full max-w-6xl mx-auto">
+	{% if errors %} 
+    {% for error in errors %}
+      <div
+        class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+        role="alert">
+        <strong class="font-bold">Error!</strong>
+        <span class="block sm:inline">{{ error }}</span>
+      </div>
+	  {% endfor %}
+  {% endif %}
+<a
+		class="flex rounded-md relative w-fit mb-4"
+		href="{{ url_for('modulo_usuarios.listado') }}"
+		alt="volver a equipo">
+		<span class="material-symbols-outlined"> arrow_back </span>
+		<span class="material-symbols-rounded"> groups </span>
+	</a>
+	<h1 class="text-center text-2xl font-bold mb-5">
+		Editando usuario "{{ user.alias }}"
+	</h1>
+
+  <div
+    class="w-full max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md relative flex flex-col justify-between"
+  >
+    <form
+      class="flex flex-col space-y-6 my-1"
+      action="{{ url_for('modulo_usuarios.actualizar_usuario', email=user.email) }}"
+      method="POST">
+      <div class="min-w-[120px] w-full sm:w-auto">
+        <h1 class="font-bold mb-5">Email: {{ user.email }}</h1>
+        <label
+          for="alias"
+          class="form-label">
+          Alias del Usuario
+        </label>
+        <input
+          type="text"
+          placeholder="{{ user.alias }}"
+          value="{{ user.alias }}"
+          name="alias"
+          id="alias"
+          class="form-input p-2" />
+      </div>
+
+      <div class="min-w-[120px] w-full sm:w-auto">
+        <label
+          for="rol"
+          class="form-label">
+          Rol
+        </label>
+        <select name="rol_id" id="role" class="form-input  p-2">
+          {% for role in roles %}
+            <option 
+              value="{{ role.id }}"
+              {% if role.nombre == user.rol.nombre %} selected {% endif %}
+            >
+              {{ role.nombre }}
+            </option>
+          {% endfor %}
+        </select>
+        <div class="flex justify-end mt-2 ">
+          <a
+            href="{{ url_for('modulo_usuarios.listado') }}"
+            class="relative text-blue-400 hover:border hover:rounded-lg hover:bg-gray-100 px-4 py-2 mx-5 flex items-center transition duration-300 ease-in-out transform hover:scale-105 active:scale-95">
+            
+            Cancelar
+          </a>
+          <button
+            type="submit"
+            class="relative text-white hover:text-white hover:bg-blue-500 flex items-center border border-blue-500 rounded-lg bg-blue-400 p-2 transition duration-300 ease-in-out shadow-md transform hover:scale-105 active:scale-95">
+            <span class="material-symbols-rounded">save</span>
+            Guardar cambios
+          </button>
+        </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

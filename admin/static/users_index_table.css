@@ -1,0 +1,30 @@
+table {
+    width: 100%;
+    border-collapse: separate; /* Permite la separación entre filas */
+    margin: 0 auto; /* Añade espacio vertical de 15px entre las filas */
+    color: white;
+}
+
+th{
+    border-bottom: 1px solid white;
+    padding: 10px;
+    text-align: left;
+    vertical-align: top;
+    color: white;
+}
+
+tbody tr {
+    color: black;
+}
+
+form label, p , a {
+    color: white;
+    padding: 1%;
+    font-weight: 500;
+}
+
+form button {
+    color: orangered;
+    padding: 1%;
+    font-weight: 500;
+}

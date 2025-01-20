@@ -1,0 +1,67 @@
+{% extends "layout.html" %} {% block title %}Ver Cobro{% endblock %} 
+{%block head %} 
+    {{ super() }}
+{% endblock %} 
+{% block content %}
+    <div class="w-full max-w-6xl mx-auto">
+        {% if errors %} {% for error in errors %}
+        <div
+            class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+            role="alert">
+            <strong class="font-bold">Error!</strong>
+            <span class="block sm:inline">{{ error }}</span>
+        </div>
+        {% endfor %} {% endif %}
+          <a class="flex rounded-md relative w-fit" href="{{url_for('modulo_cobros.listado')}}" alt="volver a cobros">
+        <span class="material-symbols-outlined">
+          arrow_back
+        </span>
+        <span class="material-symbols-outlined">
+          payments
+        </span>
+        </a>
+        <h1 class="text-center text-2xl font-bold py-4">
+            Visualizando Cobro
+        </h1>
+        
+        <div class="w-full max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
+            <div class="min-w-[120px] w-full sm:w-auto">
+                <h2 class="font-bold text-xl mb-2">Equitador</h2>
+                <ul>
+                    <li><strong>DNI:</strong> {{ charge.dni_equitador }}</li>
+                    <li><strong>Nombre y Apellido:</strong> {{ charge.equitador.nombre }} {{charge.equitador.apellido}}</li>
+                </ul>
+            </div>
+
+            <div class="min-w-[120px] w-full sm:w-auto">
+                <p><strong>Fecha de Pago:</strong> {{charge.fecha_pago.strftime("%d/%m/%Y")}}</p>
+            </div>
+
+            <div class="min-w-[120px] w-full sm:w-auto mb-8">
+                <p><strong>Medio de Pago:</strong> {{charge.medio_de_pago.value}}</p>
+            </div>
+
+            <div class="min-w-[120px] w-full  border-t-2 sm:w-auto">
+                <h2 class="font-bold  text-xl my-2 ">Empleado</h2>
+                <ul>  
+                    <li><strong>DNI:</strong> {{charge.dni_empleado}}</li>
+                    <li><strong>Nombre y Apellido:</strong> {{charge.empleado.nombre}} {{charge.empleado.apellido}}</li>
+                </ul>
+            </div>
+
+            <div class="min-w-[120px] w-full sm:w-auto">
+                <h2 class="font-bold">Observaciones:</h2>
+                <pre>{{ charge.observaciones }}</pre>
+            </div>
+
+            <div class="min-w-[120px] w-full sm:w-auto">
+                <p><strong>Fecha de Alta:</strong> {{charge.inserted_at.strftime("%d/%m/%Y")}}</p>
+            </div>
+
+            <div class="min-w-[120px] w-full sm:w-auto">
+                <p><strong>Ultima vez modificado:</strong> {{charge.updated_at.strftime("%d/%m/%Y")}}</p>
+            </div>
+        </div>
+    </div>
+    
+    {% endblock %}

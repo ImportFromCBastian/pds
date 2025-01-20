@@ -1,0 +1,260 @@
+{% extends "layout.html" %} {% block head %} {{ super() }}
+<style>
+  .tab-button {
+    padding: 10px 20px;
+    background-color: #388e3c;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    color: white;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .tab-button:hover {
+    background-color: #45a049;
+  }
+
+  .styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 16px;
+    text-align: left;
+    background-color: #fff;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .styled-table th,
+  .styled-table td {
+    padding: 12px 15px;
+  }
+
+  .styled-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+  }
+
+  .styled-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+  }
+
+  .edit-button {
+    background-color: #ffeb3b;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .edit-button .material-symbols-outlined {
+    color: black;
+    font-size: 20px;
+  }
+
+  .delete-button {
+    background-color: red;
+    border-radius: 5px;
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: white;
+  }
+
+  .title-datos {
+    font-size: 28px;
+    font-weight: bold;
+    color: #4caf50;
+    text-align: center;
+    margin: 10px 0;
+  }
+
+  .back-button {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .back-button a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .doc-button {
+    background-color: white;
+    color: #388e3c;
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    border: none;
+    margin-bottom: 20px;
+    transition: background-color 0.3s;
+  }
+
+  .doc-button:hover {
+    background-color: #f0f0f0;
+  }
+
+  .doc-button .material-symbols-outlined {
+    margin-left: 5px;
+  }
+</style>
+{% endblock %} {% block title %} Actualizar información {% endblock %} {% block
+content %} {% if success %}
+<div class="border px-4 py-3 rounded relative mb-4" role="alert">
+  <strong class="font-bold">Éxito!</strong>
+  <span class="block sm:inline">{{ success }}</span>
+</div>
+{% endif %}
+
+<div class="flex items-center justify-between mb-4">
+  <a
+    class="flex"
+    href="{{ url_for('equestrian.index') }}"
+    alt="volver al menu de caballos"
+  >
+    <span class="mt-2 material-symbols-outlined">arrow_back</span>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      version="1.1"
+      class="w-12 h-12 b-2"
+      viewBox="-5.0 -10.0 110.0 135.0"
+    >
+      <g>
+        <path
+          d="m63.48 57.516c-0.82812 0-1.5 0.67188-1.5 1.5 0 1.6562-1.3438 3-3 3h-4.5c-0.82812 0-1.5 0.67188-1.5 1.5s0.67188 1.5 1.5 1.5h4.5c3.3086 0 6-2.6914 6-6 0-0.82812-0.67188-1.5-1.5-1.5z"
+        />
+        <path
+          d="m61 15.934c0.38281 0 0.76953-0.14453 1.0586-0.4375 2.5234-2.5195 10.895-4.4727 16.418-4.4727 0.23438 0 0.46484-0.054688 0.67578-0.16016l5.957-3c0.73828-0.375 1.0352-1.2734 0.66406-2.0156-0.375-0.74219-1.2773-1.0391-2.0117-0.66797l-5.6406 2.8438c-5.5742 0.078124-14.762 1.9297-18.184 5.3477-0.58594 0.58594-0.58594 1.5352 0 2.1211 0.29297 0.29297 0.67969 0.44141 1.0625 0.44141z"
+        />
+        <path
+          d="m94.375 29.484-8.5586-16.895c-0.37109-0.74219-1.2812-1.0312-2.0156-0.66016-0.74219 0.375-1.0352 1.2773-0.66016 2.0156l8.6445 17.035c0.34766 0.53125 0.25391 1.3242-0.18359 1.7812l-3.6562 1.6602-6.0078-6.1328c-0.32812-0.33984-0.80078-0.50391-1.2773-0.4375-1.4492 0.19531-3.5625-0.51172-5.0234-1.6914-0.92969-0.75391-1.293-1.4492-1.3242-1.8477-0.0625-0.82812-0.85156-1.4648-1.6055-1.3867-0.82422 0.058594-1.4453 0.77734-1.3906 1.6055 0.039063 0.53125 0.19531 1.0703 0.45703 1.5977l-2.7734 4.5078c-0.43359 0.70312-0.21484 1.6289 0.49219 2.0625 0.24219 0.15234 0.51562 0.22266 0.78516 0.22266 0.5 0 0.99219-0.25391 1.2773-0.71484l2.2578-3.668c1.8984 1.5117 4.418 2.3945 6.4648 2.3477l6.2539 6.3867c0.28906 0.29687 0.67578 0.44922 1.0703 0.44922 0.21094 0 0.42188-0.042968 0.62109-0.13672l4.8242-2.1914c0.11328-0.050781 0.22266-0.11719 0.32031-0.19922 1.75-1.4062 2.1523-3.9805 1.0078-5.7109z"
+        />
+        <path
+          d="m73.191 47.023h-0.003906l-6.7109-0.003907c-0.82812 0-1.5 0.67188-1.5 1.5s0.67188 1.5 1.5 1.5l6.7109 0.003907h0.003906c0.97656 0 1.9023 0.44531 2.6133 1.2461 0.75781 0.85938 1.1758 2.0117 1.1758 3.25v10.844c0 1.2617-0.78906 3.1484-1.7617 4.1094l-4.1172 4.6523-1.1484-4.7656 1.668-1.1914 1.8203-0.22266c0.76172-0.089843 1.3281-0.74219 1.3164-1.5117l-0.18359-11.938c-0.011719-0.82031-0.67969-1.4766-1.5-1.4766h-8.0977c-2.4414 0-4.5-1.375-4.5-3v-1.5c0-0.82812-0.67187-1.5-1.5-1.5-0.82812 0-1.5 0.67188-1.5 1.5v1.5c0 0.30078 0.035157 0.59766 0.089844 0.88672-2.3203 1.1289-7.6172 1.9102-9.3906 2.1133h-5.6992c-0.82812 0-1.5 0.67188-1.5 1.5s0.67188 1.5 1.5 1.5l5.8633-0.007812c0.76953-0.085938 7.3633-0.85156 10.602-2.4414 1.3672 1.4805 3.5586 2.4492 6.0352 2.4492h6.6211l0.14062 9.1094-0.86328 0.10547c-0.24609 0.027344-0.48438 0.12109-0.69141 0.26953l-2.8008 2.0078c-0.5 0.35547-0.73047 0.97656-0.58594 1.5703l2.0625 8.5469c0.13281 0.54297 0.55469 0.96875 1.0977 1.1055 0.11719 0.027344 0.24219 0.042969 0.36328 0.042969 0.42578 0 0.83594-0.17969 1.1211-0.50781l5.9531-6.7305c1.4727-1.4492 2.5859-4.1016 2.5859-6.1719l-0.003907-10.848c0-1.9688-0.68359-3.8281-1.9258-5.2344-1.2852-1.4609-3.0117-2.2617-4.8594-2.2617z"
+        />
+        <path
+          d="m6.4805 35.02h4.1953c2.1172 0 4.625-1.3906 5.832-3.2383 8.2227-12.617 17.922-17.762 33.477-17.762 0.42969 0 0.83984-0.18359 1.125-0.50781l4.5-5.1016c0.54688-0.62109 0.48828-1.5703-0.13281-2.1172-0.625-0.54688-1.5703-0.49219-2.1172 0.13281l-4.0547 4.5977c-16.105 0.15625-26.688 5.9023-35.309 19.121-0.64844 1-2.1992 1.875-3.3164 1.875h-4.1992c-0.82812 0-1.5 0.67188-1.5 1.5s0.66797 1.5 1.5 1.5z"
+        />
+        <path
+          d="m43.98 59.02h-6.8984c1.6719-4.6875 1.0156-11.93 0.78516-13.98l6.5547-10.516c2.1406 1.793 5.1562 2.8477 7.9883 2.543l7.1094 6.6289c0.28516 0.26563 0.64844 0.40234 1.0234 0.40234 0.23047 0 0.46484-0.054687 0.67969-0.16406l4.875-2.4844c0.09375-0.046875 0.18359-0.10547 0.26562-0.17188 1.8984-1.5352 2.3359-4.3398 1.0391-6.3086l-11.062-19.148c-0.41406-0.72266-1.332-0.96484-2.0469-0.55078-0.71875 0.41406-0.96484 1.332-0.54688 2.0508l11.105 19.223c0.46484 0.70703 0.33203 1.7344-0.27344 2.3164l-3.7773 1.9219-6.8711-6.4102c-0.35547-0.33203-0.84375-0.47266-1.3203-0.37109-3.2539 0.65625-7.4531-1.6484-8.0312-4.4141-0.17188-0.8125-0.98047-1.3281-1.7734-1.1602-0.8125 0.17188-1.3281 0.96484-1.1602 1.7773 0.14062 0.66797 0.40234 1.3047 0.74609 1.9102l-7.3438 11.785c-0.18359 0.29687-0.25781 0.64844-0.21094 0.99609 0.011718 0.089844 1.207 9.2148-0.80469 13.695-0.38281 0.85547-0.35547 1.7305 0.074219 2.4023 0.42578 0.65234 1.1797 1.0273 2.0703 1.0273h7.8125c1.6562 0 3 1.3438 3 3v13.793c0 1.2969-0.75 3.293-1.6953 4.3789l-4.9062 6.8398-1.3945-5.4297 1.2305-1.582h2.2695c0.82812 0 1.5-0.67188 1.5-1.5v-15c0-0.82812-0.67188-1.5-1.5-1.5h-12c-2.4805 0-4.5-2.0195-4.5-4.5v-3c0-0.82812-0.67188-1.5-1.5-1.5-0.82813 0-1.5 0.67188-1.5 1.5v3c0 0.80469 0.12891 1.5781 0.36328 2.3047-4.5391 1.2891-11.422 2.1953-16.863 2.1953-0.82813 0-1.5 0.67188-1.5 1.5s0.67187 1.5 1.5 1.5c6.0703 0 13.566-1.0352 18.402-2.5234 0.97266 1.0898 2.2539 1.8945 3.7109 2.2734l2.0898 3.8906c1.2617 2.3398 1.4492 4.4688 0.53906 5.9922-0.91016 1.5234-2.8789 2.3633-5.5352 2.3633h-16.832l2.3516-4.8711 2.4492 0.035157 1.3789 1.3945c0.28125 0.28516 0.66406 0.44531 1.0664 0.44531l11.07-0.003906c0.56641 0 1.0859-0.32031 1.3398-0.82422 0.25391-0.50781 0.20312-1.1133-0.13672-1.5664l-2.6094-3.5117c-0.49219-0.67578-1.4414-0.80469-2.0977-0.3125-0.66406 0.49609-0.80859 1.4336-0.3125 2.0977l0.82812 1.1172-7.4648 0.003906-1.3672-1.3867c-0.27344-0.27734-0.64844-0.4375-1.0469-0.44531l-4.0195-0.058594c-0.50391 0.042969-1.1172 0.32031-1.3711 0.85156l-3.8047 7.8867c-0.22656 0.46484-0.19141 1.0117 0.078125 1.4453 0.27344 0.4375 0.75781 0.70312 1.2695 0.70312h19.207c3.7578 0 6.6367-1.3594 8.1094-3.8242 1.4727-2.4688 1.3086-5.6484-0.47266-8.9531l-1.1914-2.2227h8.8477v12h-1.5c-0.46484 0-0.89844 0.21484-1.1836 0.57812l-2.1328 2.7422c-0.28125 0.36719-0.38281 0.84375-0.26953 1.293l2.3711 9.2539c0.14453 0.56641 0.60547 0.99219 1.1758 1.1016 0.09375 0.015625 0.1875 0.027344 0.27734 0.027344 0.47656 0 0.93359-0.23047 1.2188-0.625l6.6914-9.332c1.3398-1.5273 2.3516-4.2148 2.3516-6.2461l0.007812-13.789c0.003907-3.3086-2.6914-6-5.9961-6z"
+        />
+      </g>
+    </svg>
+  </a>
+  {% if is_system_admin(session) or check_permission(session,
+  "equestrian_show")%}
+  <a
+    class="hover:text-yellow-300 text-black flex items-center"
+    href="{{ url_for('equestrian.showFiles', id=horse.id) }}"
+  >
+    <span class="material-symbols-outlined">Home_Storage</span>
+    Ver Archivos
+  </a>
+  {% endif %}
+</div>
+<h3
+  class="flex justify-center items-center text-center text-2xl font-bold my-4"
+>
+  Datos del Caballo
+</h3>
+
+<div class="bg-white rounded-lg shadow-md w-full max-w-4xl relative">
+  <div class="p-6">
+    {% if is_system_admin(session) or check_permission(session,
+    "equestrian_update")%}
+    <a
+      class="flex justify-end"
+      href="{{ url_for('equestrian.edit', id=horse.id) }}"
+    >
+      <span class="material-symbols-outlined hover:text-red-500">edit</span>
+    </a>
+    {% endif %}
+    <table class="styled-table">
+      <tr>
+        <td><strong>Nombre:</strong> {{ horse.nombre }}</td>
+        <td>
+          <strong>Fecha de Nacimiento:</strong> {{
+          style_date(horse.fecha_nacimiento) }}
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Sexo:</strong> {{ horse.sexo.value }}</td>
+        <td><strong>Raza:</strong> {{ horse.raza }}</td>
+      </tr>
+      <tr>
+        <td><strong>Pelaje:</strong> {{ horse.pelaje }}</td>
+        <td>
+          <strong>Fecha de Ingreso:</strong> {{ style_date(horse.fecha_ingreso)
+          }}
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Sede Asignada:</strong> {{ horse.sede_asignada.value }}</td>
+        <td>
+          <strong>Tipo de J&A Asignado:</strong> {{
+          horse.tipo_de_JyA_asignado.value }}
+        </td>
+      </tr>
+    </table>
+
+    <h3 class="text-lg font-semibold mb-2">Empleados Asociados</h3>
+    <div class="bg-gray-100 rounded-lg p-4 shadow-inner">
+      {% if horse.empleados and horse.empleados|length > 0 %}
+      <ul class="list-disc pl-5">
+        {% for empleado in horse.empleados %}
+        <li class="py-2">
+          <span class="font-semibold"
+            >{{ empleado.nombre }} {{ empleado.apellido }}</span
+          >
+          <span class="text-gray-500">({{ empleado.email }})</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="text-gray-500">No hay empleados asociados a este caballo.</p>
+      {% endif %}
+    </div>
+
+    <div class="button-container">
+      {% if is_system_admin(session) or check_permission(session,
+      "equestrian_destroy")%}
+      <form
+        action="{{ url_for('equestrian.delete', id=horse.id) }}"
+        method="post"
+        style="display: inline"
+      >
+        <button
+          type="submit"
+          class="delete-button transition duration-300 ease-in-out transform hover:scale-105 active:scale-95"
+          onclick="return confirm('¿Estás seguro de que deseas eliminar este caballo?');"
+        >
+          <span class="material-symbols-outlined">delete</span>
+          Eliminar
+        </button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends "layout.html" %} {% block title %}Editar Jinete/Amazona{% endblock %}
+{% block content %}
+<a class="flex w-fit rounded-md  relative" href="{{url_for('riders.info', dni=rider.dni)}}" alt="volver al listado">
+  <span class="mr-2 material-symbols-outlined">
+    arrow_back
+  </span>
+  <span class="material-symbols-rounded">
+    person
+  </span>
+  </a>
+  <h1 class="text-center text-2xl font-bold p-4">
+		Editando información académica de "{{rider.nombre}} {{rider.apellido}} "
+	</h1>
+<div class="w-full max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md">
+
+
+	
+
+	<form
+		class="flex flex-col space-y-3"
+		method="post"
+    >
+
+			<div>
+				<label
+					for="nombre"
+					class="form-label block font-medium mb-1">
+					Nombre de la Institución escolar:
+				</label>
+				<input
+					type="text"
+					name="nombre"
+					id="nombre"
+					value="{{ rider.institucion_escolar.nombre }}"
+					class="form-input border rounded w-full p-2"
+					required />
+			</div>
+			<div>
+				<label
+					for="telefono"
+					class="form-label block font-medium mb-1">
+					Teléfono:
+				</label>
+				<input
+					type="number"
+					name="telefono"
+					id="telefono"
+          pattern="^\d{1,10}$"  
+          title="Por favor, ingrese un teléfoto válido"
+          maxlength="10"  
+					value="{{  rider.institucion_escolar.telefono }}"
+					class="form-input border rounded w-full p-2 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none""
+					required />
+			</div>
+			<div>
+				<label
+					for="direccion"
+					class="form-label block font-medium mb-1">
+					Dirección:
+				</label>
+				<input
+					type="text"
+					name="direccion"
+					id="direccion"
+					value="{{  rider.institucion_escolar.direccion }}"
+					class="form-input border rounded w-full p-2"
+					required />
+			</div>
+      <div>
+				<label
+					for="grado_actual"
+					class="form-label block font-medium mb-1">
+					Grado actual:
+				</label>
+				<input
+					type="text"
+					name="grado_actual"
+					id="grado_actual"
+					value="{{ rider.institucion_escolar.grado_actual}}"
+					class="form-input border rounded w-full p-2"
+					required />
+			</div>
+      <div>
+				<label
+					for="observaciones"
+					class="form-label block font-medium mb-1">
+					Observaciones:
+				</label>
+				<input
+					type="text"
+					name="observaciones"
+					id="observaciones"
+					value="{{ rider.institucion_escolar.observaciones }}"
+					class="form-input border rounded w-full p-2"
+					 />
+			</div>
+			
+<div class="flex justify-end pt-4">
+  <a href="{{url_for("riders.info", dni=rider.dni)}}" class="relative text-blue-400 hover:border hover:rounded-lg hover:bg-gray-100 px-4 py-2 mx-5 flex items-center transition duration-300 ease-in-out transform hover:scale-105 active:scale-95">
+      Cancelar
+  </a>
+  <button type="submit" class="relative text-white hover:text-white hover:bg-blue-500 flex items-center border border-blue-500 rounded-lg bg-blue-400 p-2 transition duration-300 ease-in-out shadow-md transform hover:scale-105 active:scale-95">
+      <span class="material-symbols-outlined">save</span>
+			Guardar cambios
+  </button>
+</form>
+</div>
+
+{% endblock %}

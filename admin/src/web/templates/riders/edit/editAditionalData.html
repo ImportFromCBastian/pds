@@ -1,0 +1,210 @@
+{% extends "layout.html" %} {% block title %}Editar Jinete/Amazona{% endblock %}
+{% block content %}
+<a class="flex w-fit rounded-md  relative" href="{{url_for('riders.info', dni=rider.dni)}}" alt="volver al listado">
+  <span class="mr-2 material-symbols-outlined">
+    arrow_back
+  </span>
+  <span class="material-symbols-rounded">
+    person
+  </span>
+  </a>
+<h1 class="text-center text-2xl font-bold p-4">
+  Editando Información Adicional de "{{rider.nombre}} {{rider.apellido}} "
+	</h1>
+<div class="w-full max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md">
+	<form
+		class="flex flex-col space-y-3"
+		method="post"
+    id="riderForm"
+    onsubmit="validateForm(event)"
+    >
+			<div>
+				<label for="becado" class="form-label block font-medium mb-1">Está becado:</label>
+          <select name="becado" id="becado" class="form-input border rounded w-full p-2" onchange="togglePorcentaje()">
+              <option value="false" {% if not rider.becado %}selected{% endif %}>No</option>
+              <option value="true" {% if rider.becado %}selected{% endif %}>Sí</option>
+          </select>
+			<div>
+    <div id="porcentaje_beca_container" class="{% if rider.becado == true %}block{% else %}hidden{% endif %}">
+				<label
+					for="porcentaje_beca"
+					class="form-label block font-medium mb-1">
+					Porcentaje de la beca:
+				</label>
+				<input
+        type="number"  
+        name="porcentaje_beca"
+        id="porcentaje_beca"
+        value="{{ rider.porcentaje_beca }}"
+        pattern="^[0-9]{1,3}$"  
+        min="0"    
+        max="100"  
+        class="form-input border rounded w-full p-2"
+        required />
+    </div>
+    <div>
+				<label for="recibe_asignacion" class="form-label block font-medium mb-1">Percibe asignación familiar:</label>
+          <select name="recibe_asignacion" id="recibe_asignacion" class="form-input border rounded w-full p-2" onchange="toggleAsignacion()">
+              <option value="false" {% if not rider.recibe_asignacion %}selected{% endif %}>No</option>
+              <option value="true" {% if rider.recibe_asignacion %}selected{% endif %}>Sí</option>
+          </select>
+			<div>
+  <div id="tipo_asignacion_container" class="{% if rider.recibe_asignacion == true %}block{% else %}hidden{% endif %} items-left mb-2 flex flex-col">
+    <label class="form-label block font-medium mb-1">
+        Tipo de asignación:
+    </label>
+    <div class="flex items-center mb-2">
+        <input
+            type="checkbox"
+            name="tipo_asignacion[]"
+            id="tipo_asignacion_hijo" 
+            value="Asignación universal por hijo"
+            class="form-checkbox"
+            {% if rider.tipo_asignacion is not none and "Asignación universal por hijo" in rider.tipo_asignacion %}checked{% endif %} />
+        <label for="tipo_asignacion_hijo" class="ml-2">Asignación universal por hijo</label>
+    </div>
+    
+    <div class="flex items-center mb-2">
+        <input
+            type="checkbox"
+            name="tipo_asignacion[]"
+            id="tipo_asignacion_hijo_discapacidad"
+            value="Asignación universal por hijo con discapacidad"
+            class="form-checkbox"
+            {% if rider.tipo_asignacion is not none and "Asignación universal por hijo con discapacidad" in rider.tipo_asignacion %}checked{% endif %} />
+        <label for="tipo_asignacion_hijo_discapacidad" class="ml-2">Asignación universal por hijo con discapacidad</label>
+    </div>
+    
+    <div class="flex items-center mb-2">
+        <input
+            type="checkbox"
+            name="tipo_asignacion[]"
+            id="tipo_asignacion_ayuda_escolar"
+            value="Asignación por ayuda escolar anual"
+            class="form-checkbox"
+            {% if rider.tipo_asignacion is not none and "Asignación por ayuda escolar anual" in rider.tipo_asignacion %}checked{% endif %} />
+        <label for="tipo_asignacion_ayuda_escolar" class="ml-2">Asignación por ayuda escolar anual</label>
+    </div>
+</div>
+          
+<div>
+    <label for="recibe_pension" class="form-label block font-medium mb-1">Recibe pensión:</label>
+    <select name="recibe_pension" id="recibe_pension" class="form-input border rounded w-full p-2" onchange="togglePension()">
+        <option value="false" {% if not rider.recibe_pension %}selected{% endif %}>No</option>
+        <option value="true" {% if rider.recibe_pension %}selected{% endif %}>Sí</option>
+    </select>
+</div>
+
+<div id="tipo_pension_container" class="{% if rider.recibe_pension == true %}block{% else %}hidden{% endif %}">
+  <label class="form-label block font-medium mb-1">
+    Tipo de Pensión:
+</label>
+    <select name="tipo_pension" id="tipo_pension" class="form-input border rounded w-full p-2">
+        <option value="" disabled>Seleccione un tipo de pensión</option>
+        {% for pension in PensionType %}
+            <option value="{{ pension.name }}" {% if pension.name == rider.tipo_pension.name %} selected {% endif %}>{{ pension.value }}</option>
+        {% endfor %}
+    </select>
+</div>
+<div>
+				<label
+					for="profesionales"
+					class="form-label block font-medium mb-1">
+					Profesionales que lo atienden:
+				</label>
+				<input
+					type="text"
+					name="profesionales"
+					id="profesionales"
+					value="{{ rider.profesionales }}" 
+					class="form-input border rounded w-full p-2"
+					required />
+			</div>
+		<div class="flex justify-end pt-4">
+      <div
+			id="error-msg"
+			class="hidden text-red-500 mt-2"></div>
+ <a href="{{url_for("riders.info", dni=rider.dni)}}" class="relative text-blue-400 hover:border hover:rounded-lg hover:bg-gray-100 px-4 py-2 mx-5 flex items-center transition duration-300 ease-in-out transform hover:scale-105 active:scale-95">
+      Cancelar
+  </a>
+  <button type="submit" class="relative text-white hover:text-white hover:bg-blue-500 flex items-center border border-blue-500 rounded-lg bg-blue-400 p-2 transition duration-300 ease-in-out shadow-md transform hover:scale-105 active:scale-95">
+      <span class="material-symbols-outlined">save</span>
+      Guardar cambios
+  </button>
+</form>
+</div>
+
+<script>
+  function validateForm(event) {
+		const currentForm = document.getElementById('riderForm');
+		const errorMsg = document.getElementById('error-msg');
+		let allFieldsValid = true;
+		const requiredInputs = currentForm.querySelectorAll('input[required]');
+
+
+			if (document.getElementById('recibe_asignacion').value === 'true') {
+				let checkboxes = document.querySelectorAll(
+					'input[type="checkbox"][name="tipo_asignacion[]"]'
+				);
+				let checkedOne = Array.from(checkboxes).some((x) => x.checked);
+				if (!checkedOne) {
+					showError('Debe seleccionar al menos un tipo de asignación');
+					allFieldsValid = false;
+				}
+			}
+			if (document.getElementById('becado').value === 'true') {
+				let porcentajeBeca = document.getElementById('porcentaje_beca').value;
+				if (porcentajeBeca === '') {
+					showError('Debe especificar el porcentaje de la beca');
+					allFieldsValid = false;
+				}
+      }
+       if (!allFieldsValid) {
+      event.preventDefault();
+    }
+
+		}
+
+		function showError(message) {
+			const errorMsg = document.getElementById('error-msg');
+			errorMsg.textContent = message;
+			errorMsg.classList.remove('hidden');
+		}
+  function togglePorcentaje() {
+    const estaBecadoSelect = document.getElementById('becado');
+    const porcentajeContainer = document.getElementById('porcentaje_beca_container');
+    
+    if (estaBecadoSelect.value === 'true') {
+        porcentajeContainer.classList.remove('hidden');
+        porcentajeContainer.classList.add('block');
+    } else {
+        porcentajeContainer.classList.remove('block');
+        porcentajeContainer.classList.add('hidden');
+    }
+}
+ function toggleAsignacion(){
+    const recibeAsignacion = document.getElementById('recibe_asignacion');
+    const tipoAsignacionContainer = document.getElementById('tipo_asignacion_container');
+    
+    if (recibeAsignacion.value === 'true') {
+        tipoAsignacionContainer.classList.remove('hidden');
+        tipoAsignacionContainer.classList.add('block');
+    } else {
+        tipoAsignacionContainer.classList.remove('block');
+        tipoAsignacionContainer.classList.add('hidden');
+    }
+}
+function togglePension(){
+    const recibePension = document.getElementById('recibe_pension');
+    const tipoPension = document.getElementById('tipo_pension_container');
+    
+    if (recibePension.value === 'true') {
+        tipoPension.classList.remove('hidden');
+        tipoPension.classList.add('block');
+    } else {
+        tipoPension.classList.remove('block');
+        tipoPension.classList.add('hidden');
+    }
+}
+</script>
+{% endblock %}

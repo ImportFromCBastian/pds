@@ -1,0 +1,101 @@
+{% extends "layout.html" %}
+{% block title %}Editar Consulta{% endblock %}
+{% block head %}
+{{ super() }} 
+{% endblock %} 
+{% block content %}
+
+<div class="w-full max-w-6xl mx-auto">
+	{% if errors %} 
+    {% for error in errors %}
+      <div
+        class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+        role="alert">
+        <strong class="font-bold">Error!</strong>
+        <span class="block sm:inline">{{ error }}</span>
+      </div>
+	  {% endfor %}
+  {% endif %}
+    <a
+		class="flex rounded-md relative w-fit mb-4"
+		href="{{url_for('modulo_contacto.listado')}}"
+		alt="Volver al listado de Consulas">
+		<span class="material-symbols-outlined"> arrow_back </span>
+		<span class="material-symbols-rounded"> groups </span>
+	</a>
+	<h1 class="text-center text-2xl font-bold mb-5">
+		Editando Consulta con Titulo "{{ query.titulo }}"
+	</h1>
+
+  <div
+    class="w-full max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md relative flex flex-col justify-between"
+  >
+    <form
+        class="flex flex-col space-y-6 my-1"
+        action="{{ url_for('modulo_contacto.actualizar_consulta', id=query.id) }}"
+        method="POST">
+        <div class="min-w-[120px] w-full sm:w-auto">
+            <h1 class="font-bold mb-5">Titulo: {{ query.titulo }}</h1>
+            <h2 class="font-bold mb-5">Remitente: {{ query.email }}</h2>
+            <p class="font-bold mb-5">Descripcion: {{ query.descripcion }}</p>
+        </div>
+
+        <div class="min-w-[120px] w-full sm:w-auto">
+            <label
+            for="query_state"
+            class="form-label">
+            Estado de la Consulta
+            </label>
+            <select name="query_state" id="query_state" class="form-input  p-2">
+            {% for q_state in query_states %}
+                <option 
+                value="{{ q_state.name }}"
+                {% if q_state.name == query.estado %} selected {% endif %}
+                >
+                {{ q_state.value }}
+                </option>
+            {% endfor %}
+            </select>
+        </div>
+
+        <div class="min-w-[120px] w-full sm:w-auto">
+            <label
+            for="query_coment"
+            class="form-label">
+            Comentario para la consulta
+            </label>
+            {% if query.comentario %}
+              <textarea
+                type="text"
+                name="query_coment"
+                id="query_coment"
+                class="form-input p-2 border rounded w-full border-gray-300">{{query.comentario}}
+              </textarea>
+            {% else %}
+              <textarea
+              type="text"
+              name="query_coment"
+              id="query_coment"
+              class="form-input p-2 border rounded w-full border-gray-300">
+            </textarea>
+            {% endif %}
+        </div>
+
+        <div class="flex justify-end mt-2 ">
+          <a
+            href="{{ url_for('modulo_contacto.listado') }}"
+            class="relative text-blue-400 hover:border hover:rounded-lg hover:bg-gray-100 px-4 py-2 mx-5 flex items-center transition duration-300 ease-in-out transform hover:scale-105 active:scale-95">
+            
+            Cancelar
+          </a>
+          <button
+            type="submit"
+            class="relative text-white hover:text-white hover:bg-blue-500 flex items-center border border-blue-500 rounded-lg bg-blue-400 p-2 transition duration-300 ease-in-out shadow-md transform hover:scale-105 active:scale-95">
+            <span class="material-symbols-rounded">save</span>
+            Guardar cambios
+          </button>
+        </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
